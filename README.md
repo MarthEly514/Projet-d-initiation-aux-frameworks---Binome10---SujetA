@@ -28,4 +28,35 @@ Le but de ce projet est de pouvoir créer avec Laravel une application pour orga
 
 ## Instructions de lancement
 
+- **Prerequis**
+    - PHP 8.2+ et Composer
+    - Node 20+ (pour Vite et React)
+    - XAMPP (MySQL/MariaDB + phpMyAdmin)
+    - Git
+
+- **Mise en place du projet Laravel avec**
+    - React
+    - Authentication Laravel
+
+    ```bash
+    composer global require laravel/installer
+    laravel new taskflow
+    ```
+    *Attendre la fin de l'installation*
+
+    ```bash
+    php artisan serve # ou composer run dev puis aller a http://localhost:8000
+    ```
+
+
+- **Creation de la DB:** 
+```bash
+# ouverture de XAMPP (les commandes peuvent varier en fonction du systeme d'exploitation)
+sudo /opt/lampp/lampp start
+```
+Aller à `http://localhost/phpmyadmin` puis creez une nouvelle base de donnees nommee **tasq** et la laisser vide
+
+
+
+
 

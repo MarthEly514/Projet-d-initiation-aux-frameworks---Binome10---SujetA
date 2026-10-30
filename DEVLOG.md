@@ -1,7 +1,7 @@
 # DEVLOG.md
 Each developer **should notify his changes** and everything he's done in the code so far. That will help the other developers to easily pick up from where the previous developer left. 
 
-- Ely514:
+- ## Ely514:
 **Definition des modalites de l'application**
 ## Acteurs:
 - Collaborateur (User)
@@ -158,5 +158,36 @@ POST|/teams/{team}/leave|Quitter (refusé si dernier membre ou dernier responsab
 |POST|/tasks/{task}/approve|Valider : review → faite|responsable|
 |POST|/tasks/{task}/reject|Renvoyer en en cours|responsable|
     
+
+- ## Ely514:
+- Mise en place du projet Laravel avec 
+    - React
+    - Authentication Laravel
+
+- Creation de la DB: 
+```bash
+# ouverture de XAMPP (les commandes peuvent varier en fonction du systeme d'exploitation)
+sudo /opt/lampp/lampp start
+```
+Aller à `http://localhost/phpmyadmin` puis creez une nouvelle base de donnees nommee **tasq** et la laisser vide
+
+- Enumeration des composantes UI:
+    - TextInput (type: text\password)
+    - LabeledTextInput (extends TextInput, label:text)
+    - Avatar (image)
+    - Button
+    - SearchBar
+    - SideNav
+    - NavOptions
+    - Logo
+    - TasksGraph
+    - Timeline
+    - Taskboard
+    - TaskCard
+    - NewTaskModal
+    - AssigneesModal
+    - 
+
+
 
     
