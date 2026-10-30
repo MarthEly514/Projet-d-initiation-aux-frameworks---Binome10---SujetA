@@ -60,8 +60,8 @@ Each developer **should notify his changes** and everything he's done in the cod
 - Collabs
 - Params
 - Profile
-- Forgot password
-- OTP (if necessary)
+- Forgot password (if necessary, mais pas obligé)
+- OTP (if necessary, mais pas obligé)
 
 ## Modeles:
 - **User**
