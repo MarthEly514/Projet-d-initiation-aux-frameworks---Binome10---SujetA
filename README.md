@@ -7,6 +7,22 @@ Le but de ce projet est de pouvoir créer avec Laravel une application pour orga
 - AMOUSSOU Siméon Céphas
 
 ## Fonctionnalités réalisées
+- Inscription
+- Connexion
+- Creer une équipe (ce qui fait du createur de team le responsable de la team)
+- Rejoindre une équipe
+- Quitter une équipe
+- Ajouter des membres a une équipe
+- Creer une tache (A faire par le responsable. Ceci ne peut se faire qu'a l'interieur d'une équipe, pas en dehors)
+- Modifier une tache
+- Assigner une tache a un collaborqteur (tout en specifiant si celui-ci en est le responsable ou juste un collaborateur sur la tache)
+- Filtrer les taches par statut / responsable
+- Consulter l'overview des taches (le collab simple doit pouvoir voir toutes les taches qui le concernent dans sa vue "overview" La vue complete est uniquement reservee a l'administrateur d'équipe)
+- Modifier le statut d'une tache (ceci se fera en cochant "fait" sur les etapes des taches assignees. Ex:Si une tache a 5 sous-taches, le fait de ne pas en cocher au moins une le garde a l'etat "A faire", en cocher au moins une la fait passer a " en cours", tout cocher permet de la faire passer a l'etat "in review" et enfin seul le responsable pourra verifier et marquer "fait" (penser a implementer un systeme de notification dans ce cas))
+- Supprimer une tache
+- Supprimer un collaborateur
+- Supprimer une équipe (previens que toutes les taches seront perdues)
+- Consulter la timeline des taches
 
 ## Choix techniques
 
