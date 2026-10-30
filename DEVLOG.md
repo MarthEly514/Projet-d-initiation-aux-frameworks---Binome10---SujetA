@@ -206,4 +206,6 @@ php artisan migrate
 composer run dev
 ```
 
+- Creation des interfaces de connexion et d'inscription, ajout du logo (public/images/), creation des composantes prores a Tasq (resources/js/components/tasq). A faire: forgot password et les autres, creation des contorlleurs lies aux taches etc.
+
     

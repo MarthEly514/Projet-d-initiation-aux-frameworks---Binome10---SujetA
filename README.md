@@ -75,7 +75,9 @@ php artisan migrate
 composer run dev
 ```
 
-
+- **Installation de packages additionnels**
+```bash
+npm install recharts
 
 
 
