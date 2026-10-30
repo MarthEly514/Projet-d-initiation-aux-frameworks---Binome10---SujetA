@@ -188,6 +188,22 @@ Aller à `http://localhost/phpmyadmin` puis creez une nouvelle base de donnees n
     - AssigneesModal
     - 
 
+- Update du .env
 
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=taskflow
+DB_USERNAME=root
+DB_PASSWORD=
+MAIL_MAILER=log
+```
+
+- Migration de la base
+```bash
+php artisan migrate
+composer run dev
+```
 
     
