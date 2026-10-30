@@ -45,6 +45,7 @@ Le but de ce projet est de pouvoir créer avec Laravel une application pour orga
     *Attendre la fin de l'installation*
 
     ```bash
+    cd tasq
     php artisan serve # ou composer run dev puis aller a http://localhost:8000
     ```
 
