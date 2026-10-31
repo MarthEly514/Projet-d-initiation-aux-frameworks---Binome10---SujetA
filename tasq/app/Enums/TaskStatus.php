@@ -18,4 +18,17 @@ enum TaskStatus: string
             self::Faite => 'Faite',
         };
     }
+
+    /**
+     * The statuses as options for the filters.
+     *
+     * @return list<array{value: string, label: string}>
+     */
+    public static function options(): array
+    {
+        return array_map(
+            fn (self $status) => ['value' => $status->value, 'label' => $status->label()],
+            self::cases(),
+        );
+    }
 }

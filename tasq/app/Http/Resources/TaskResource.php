@@ -34,6 +34,7 @@ class TaskResource extends JsonResource
             'end_date' => $this->end_date?->toDateString(),
             'lead' => $leads->map($summary)->first(),
             'collaborators' => $collaborators->map($summary)->values()->all(),
+            'team' => $this->whenLoaded('team', fn () => $this->team->only('id', 'name')),
             'steps' => $this->whenLoaded('steps', fn () => $this->steps->map(fn (Step $step) => $step->only('id', 'title', 'is_done'))->all()),
         ];
     }
