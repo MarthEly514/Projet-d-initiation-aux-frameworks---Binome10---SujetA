@@ -158,8 +158,8 @@ POST|/teams/{team}/leave|Quitter (refusé si dernier membre ou dernier responsab
 |POST|/tasks/{task}/approve|Valider : review → faite|responsable|
 |POST|/tasks/{task}/reject|Renvoyer en en cours|responsable|
     
-
-- ## Ely514:
+## 2026-10-30
+- ### Ely514:
 - Mise en place du projet Laravel avec 
     - React
     - Authentication Laravel
@@ -270,5 +270,297 @@ Les tests qui affichent une page ont besoin de `npm run build` au moins une fois
 - Pour l'instant le statut se choisit à la main dans le formulaire. B2 doit le calculer à partir des étapes.
 - Les messages d'erreur des tâches sont en français dans `StoreTaskRequest`, en attendant la traduction générale (A5).
 - Le seeder donne des noms de tâches en faux latin (Faker), à remplacer si on s'en sert pour la démo.
+
+
+## 2026-10-31
+
+- Creation de l'app layout utilisable par toutes les vues de l'application.
+
+- Composants UI custom (`resources/js/components/tasq/`)
+    - button.tsx
+    - dropdown-menu.tsx
+    - form-card.tsx
+    - label-input.tsx
+    - user-menu-centent.tsx
+
+Ces composants sont la base visuelle de Tasq (pilules bleues, champs soulignés, cartes arrondies). Ils **ne remplacent pas** ceux du kit (`components/ui/*`), qui restent utilisés par les pages de paramètres et d'autres composants du kit.
+ 
+```
+resources/js/components/tasq/
+├── button.tsx
+├── dropdown-menu.tsx
+├── form-card.tsx
+├── label-input.tsx
+├── logo-mark.tsx
+└── user-menu-content.tsx
+```
+  
+### Conventions
+ 
+- **Import** : toujours avec l'alias `@/`, par exemple `import { Button } from '@/components/tasq/button'`.
+- **Exports** : `Button`, `LabelInput`, `UserMenuContent`, `LogoMark` et les éléments du dropdown sont des **exports nommés** (`{ Button }`). `FormCard` est un **export par défaut** (`import FormCard from ...`).
+- **Couleur de marque** : `bg-brand`, `text-brand`, `border-brand` viennent de `--color-brand: #1a8fe8;` déclaré dans le bloc `@theme` de `resources/css/app.css`. Sans cette ligne, ces classes ne font rien.
+- **Surcharge de style** : tous les composants acceptent `className`, fusionné avec `cn(...)` (tailwind-merge). Une classe passée de l'extérieur l'emporte sur celle du composant.
+- **Police** : Lexend (`--font-sans`), appliquée globalement.
+- **Textes** : en français.
+---
+ 
+### 1. `Button` (`button.tsx`)
+ 
+**Ce que ça fait** : bouton en forme de pilule (`rounded-full`), bleu par défaut, avec 5 variantes et 4 tailles. Basé sur `class-variance-authority` et Radix `Slot`.
+ 
+**Route** : aucune.
+ 
+**Props** : toutes les props d'un `<button>` HTML, plus :
+ 
+| Prop | Valeurs | Défaut | Rôle |
+|---|---|---|---|
+| `variant` | `default`, `outline`, `ghost`, `destructive`, `link` | `default` | Style du bouton |
+| `size` | `default` (h-12), `sm` (h-9), `lg` (h-14), `icon` (carré 40 px) | `default` | Taille |
+| `asChild` | `boolean` | `false` | Rend l'enfant à la place d'un `<button>` (utile pour un `Link` Inertia) |
+| `className` | `string` | | Surcharge de style |
+ 
+Exporte aussi `buttonVariants` (pour appliquer le style à un autre élément).
+ 
+**Utilisation**
+ 
+```tsx
+import { Button } from '@/components/tasq/button';
+import { LoaderCircle } from 'lucide-react';
+ 
+// Bouton de formulaire avec état de chargement (useForm)
+<Button type="submit" className="w-full" disabled={processing}>
+    {processing && <LoaderCircle className="animate-spin" />}
+    Connexion
+</Button>
+ 
+// Variantes
+<Button variant="outline">Annuler</Button>
+<Button variant="destructive">Supprimer la team</Button>
+<Button variant="ghost" size="sm">Voir plus</Button>
+ 
+// Bouton icône (ex. « + » de la barre du haut)
+<Button size="icon" aria-label="Nouvelle tâche"><Plus /></Button>
+ 
+// Lien Inertia stylé comme un bouton
+import { Link } from '@inertiajs/react';
+<Button asChild>
+    <Link href={route('teams.index')}>Mes teams</Link>
+</Button>
+```
+ 
+**À savoir** : pour un bouton `icon`, mettre toujours un `aria-label`. Les SVG enfants sont automatiquement à 16 px.
+ 
+---
+ 
+### 2. `LabelInput` (`label-input.tsx`)
+ 
+**Ce que ça fait** : champ de saisie avec **label flottant** (style Material Design). Le label sert de placeholder tant que le champ est vide et sans focus, puis monte et rétrécit au clic ou quand il y a du texte. Le champ est souligné (pas de cadre), bleu au focus, rouge en cas d'erreur. Il affiche aussi le message d'erreur dessous (via `InputError`).
+ 
+**Route** : aucune.
+ 
+**Props** : toutes les props d'un `<input>` **sauf `placeholder`** (interdit par le type), plus :
+ 
+| Prop | Type | Rôle |
+|---|---|---|
+| `label` | `string` (obligatoire) | Texte du label flottant |
+| `error` | `string` | Message d'erreur (typiquement `errors.email` de `useForm`) ; met aussi le champ en rouge via `aria-invalid` |
+| `containerClassName` | `string` | Classes du conteneur extérieur |
+| `className` | `string` | Classes de l'`<input>` lui-même |
+| `id` | `string` | Optionnel : généré automatiquement avec `useId()` sinon |
+ 
+Le composant accepte une `ref` (`forwardRef`).
+ 
+**Utilisation**
+ 
+```tsx
+import { LabelInput } from '@/components/tasq/label-input';
+ 
+<LabelInput
+    label="Email"
+    type="email"
+    required
+    autoComplete="email"
+    value={data.email}
+    onChange={(e) => setData('email', e.target.value)}
+    error={errors.email}
+/>
+```
+ 
+**Comment ça marche** : l'input porte la classe `peer` et un `placeholder=" "` (un espace). Le label, placé **après** l'input dans le DOM, réagit à `peer-focus` et `peer-not-placeholder-shown`. Ne pas inverser l'ordre input / label, ne pas passer de `placeholder`.
+ 
+**Limites connues**
+ 
+- **`type="date"`, `time`, `datetime-local`** : `:placeholder-shown` ne fonctionne pas, le label chevauche la valeur affichée par le navigateur. Pour les dates des tâches (`start_date`, `end_date`), il faudra ajouter une prop `alwaysFloat` (à faire dans la feature Tâches).
+- **Autofill du navigateur** : si Chrome colore le fond, ajouter dans `app.css` :
+```css
+  input:-webkit-autofill {
+      -webkit-text-fill-color: var(--foreground);
+      transition: background-color 9999s ease-in-out 0s;
+  }
+```
+- **Zone de texte** (description de tâche) : ce composant est pour les `<input>` seulement. Prévoir un `LabelTextarea` si besoin.
+---
+ 
+### 3. `FormCard` (`form-card.tsx`)
+ 
+**Ce que ça fait** : un `<form>` présenté comme une carte : fond `bg-foreground/5`, coins `rounded-[2rem]`, `p-8`, éléments empilés avec `gap-6`.
+ 
+**Route** : aucune.
+ 
+**Props** : toutes les props d'un `<form>` (`onSubmit`, `id`, `noValidate`, `method`...), plus `children` et `className` (fusionné).
+ 
+**Utilisation**
+ 
+```tsx
+import FormCard from '@/components/tasq/form-card';
+ 
+<FormCard onSubmit={submit}>
+    <LabelInput label="Email" ... />
+    <LabelInput label="Mot de passe" ... />
+    <Button type="submit" className="mt-4 w-full">Connexion</Button>
+</FormCard>
+ 
+// Surcharger l'espacement
+<FormCard onSubmit={submit} className="gap-4 p-6">...</FormCard>
+```
+ 
+**Pièges**
+ 
+- **Toujours passer `onSubmit`** et faire `e.preventDefault()` dans le handler. Sans cela, le navigateur soumet le formulaire de façon native (rechargement complet de la page, champs dans l'URL).
+- Le composant transmet bien `{...props}` au `<form>` : si `onSubmit` ne semble pas appelé, vérifier ce point en premier.
+- C'est un `<form>`, pas une carte générique. Pour une carte sans formulaire (stats du dashboard), créer un composant séparé avec les mêmes classes (`bg-foreground/5 rounded-[2rem]`).
+---
+ 
+### 4. `DropdownMenu` (`dropdown-menu.tsx`)
+ 
+**Ce que ça fait** : menu déroulant (Radix) au style de la carte de login : fond opaque de la même teinte que `bg-foreground/5`, coins très arrondis, éléments en pilule, séparateurs discrets. Version tasq de `components/ui/dropdown-menu.tsx`, qui reste inchangé.
+ 
+**Route** : aucune.
+ 
+**Exports et props**
+ 
+| Export | Rôle | Props notables |
+|---|---|---|
+| `DropdownMenu` | Racine (état ouvert / fermé) | Celles de Radix `Root` |
+| `DropdownMenuTrigger` | Élément qui ouvre le menu | `asChild` pour utiliser son propre bouton |
+| `DropdownMenuContent` | Panneau flottant | `align` (`start` / `center` / `end`), `sideOffset` (défaut 8), `className` |
+| `DropdownMenuItem` | Ligne cliquable | `asChild` (pour un `Link`), `onSelect`, `disabled`, `className` |
+| `DropdownMenuLabel` | En-tête non cliquable | `className` |
+| `DropdownMenuSeparator` | Trait de séparation | `className` |
+| `DropdownMenuGroup` | Regroupe des éléments | |
+ 
+**Utilisation**
+ 
+```tsx
+import {
+    DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+    DropdownMenuSeparator, DropdownMenuTrigger,
+} from '@/components/tasq/dropdown-menu';
+ 
+<DropdownMenu>
+    <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" aria-label="Actions"><MoreVertical /></Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end">
+        <DropdownMenuItem onSelect={() => setEditing(true)}>
+            <Pencil /> Modifier
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+            className="text-destructive focus:bg-destructive/10 [&_svg]:text-destructive"
+            onSelect={() => setConfirmOpen(true)}
+        >
+            <Trash2 /> Supprimer
+        </DropdownMenuItem>
+    </DropdownMenuContent>
+</DropdownMenu>
+```
+ 
+Pour un lien de navigation, utiliser `asChild` avec un `Link` Inertia (`as="button"` si c'est un POST).
+ 
+**Limites connues** : seuls les éléments nécessaires au menu utilisateur sont stylés. Pas de sous-menus, cases à cocher ni radios : les copier depuis `components/ui/dropdown-menu.tsx` avec le même style si besoin. Ne pas mélanger les éléments `ui/` et `tasq/` dans un même menu.
+ 
+---
+ 
+### 5. `UserMenuContent` (`user-menu-content.tsx`)
+ 
+**Ce que ça fait** : contenu du menu de l'utilisateur connecté : en-tête avec avatar, nom et e-mail, lien vers les paramètres, déconnexion (en rouge). Version tasq de `components/user-menu-content.tsx` du kit.
+ 
+**Routes utilisées** (noms Ziggy, fournis par le kit) :
+ 
+| Route | Méthode | Usage |
+|---|---|---|
+| `profile.edit` | GET | Lien « Paramètres » |
+| `logout` | POST | Bouton « Déconnexion » |
+ 
+**Props**
+ 
+| Prop | Type | Rôle |
+|---|---|---|
+| `user` | `User` (type de `@/types`) | Utilisateur affiché dans l'en-tête |
+ 
+**Dépendances du kit** : `UserInfo` (`@/components/user-info`) et `useMobileNavigation` (`@/hooks/use-mobile-navigation`, ferme le menu mobile à la navigation).
+ 
+**Utilisation** : toujours à l'intérieur d'un `DropdownMenuContent` tasq (voir `components/app-topbar.tsx`).
+ 
+```tsx
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/tasq/dropdown-menu';
+import { UserMenuContent } from '@/components/tasq/user-menu-content';
+ 
+const { auth } = usePage<SharedData>().props;
+ 
+<DropdownMenu>
+    <DropdownMenuTrigger asChild>
+        {/* avatar + nom */}
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end">
+        <UserMenuContent user={auth.user} />
+    </DropdownMenuContent>
+</DropdownMenu>
+```
+ 
+Pour ajouter un lien (par exemple « Mes teams »), ajouter un `DropdownMenuItem asChild` avec un `Link` dans le groupe central.
+ 
+---
+ 
+### 6. `LogoMark` (`logo-mark.tsx`)
+ 
+**Ce que ça fait** : logo de Tasq (deux feuilles bleues, celle de devant translucide avec un coin replié) en SVG inline.
+ 
+**Props** : `className?: string` (taille et couleurs via Tailwind, ex. `size-7`).
+ 
+**Utilisation** : dans `AppLogo` (barre latérale) et dans le layout d'authentification (à la place de l'illustration inline).
+ 
+```tsx
+import { LogoMark } from '@/components/tasq/logo-mark';
+ 
+<LogoMark className="size-7 shrink-0" />
+```
+ 
+Pour le favicon, le même dessin est dans `public/favicon.svg`.
+ 
+---
+ 
+### Récapitulatif
+ 
+| Composant | Export | Route | Utilisé dans |
+|---|---|---|---|
+| `Button` | nommé | aucune | login, register, topbar, toutes les futures pages |
+| `LabelInput` | nommé | aucune | login, register, tous les futurs formulaires |
+| `FormCard` | défaut | aucune | login, register, formulaires de création |
+| `DropdownMenu*` | nommés | aucune | menu utilisateur (et futurs menus d'actions) |
+| `UserMenuContent` | nommé | `profile.edit`, `logout` | barre du haut (`app-topbar.tsx`) |
+| `LogoMark` | nommé | aucune | sidebar, layout d'authentification |
+ 
+ 
+### À faire
+ 
+- [ ] Prop `alwaysFloat` sur `LabelInput` (champs de date).
+- [ ] `LabelTextarea` pour les descriptions de tâche.
+- [ ] Composants de base communs aux features : `StatusBadge`, `Modal`, `ConfirmDialog` (à créer dans ce dossier par le premier qui en a besoin, en prévenant l'autre dev).
+- [ ] Rendre `FormCard` cohérent avec les autres (export nommé), si l'équipe préfère une seule convention.
+
+    
 
     
