@@ -244,4 +244,30 @@ Les tests qui affichent une page ont besoin de `npm run build` au moins une fois
 - Base MySQL de XAMPP : pas encore essayée, seulement SQLite.
 - `npx tsc --noEmit` signale déjà une erreur dans `welcome.tsx` (`plus-darker`), hors de ce travail.
 
+- ## Cephas:
+**B1 : Tâches (branche `feat/tasks`, partie de `fondation_commune`)**
+
+- Routes dans `routes/tasks.php` :
+    - `GET /teams/{team}/tasks?status=&responsible=` : liste filtrée, pour tout membre
+    - `POST /teams/{team}/tasks`, `PUT /tasks/{task}`, `DELETE /tasks/{task}` : pour le responsable de la team
+- `TaskPolicy`, `StoreTaskRequest`, `UpdateTaskRequest` : le responsable et les collaborateurs d'une tâche doivent être membres de sa team
+- `Task::syncAssignees($leadId, $collaboratorIds)` : garantit un seul responsable par tâche, à réutiliser partout où on assigne
+- `TaskResource` : forme d'une tâche envoyée au frontend (à réutiliser pour `/my-tasks` et l'overview)
+- Frontend : `pages/tasks/index.tsx`, `components/tasks/` (carte et dialogues), `types/task.d.ts`
+- Nouveaux composants partagés dans `components/tasq/`, à réutiliser pour garder la même DA que les pages d'authentification :
+    - `LabelSelect` et `LabelTextarea` : mêmes champs soulignés à label flottant que `LabelInput`
+    - `Modal` : fenêtre arrondie comme `FormCard`, titre en 32 px
+    - `StatusBadge` : statuts en noir et bleu `brand` uniquement
+- Repères de la DA : titre de page `text-5xl`, blocs `bg-foreground/5 rounded-[2rem] p-8` sans bordure, espacements `gap-6` et `gap-8`, boutons taille par défaut (48 px)
+- Tests : `tests/Feature/TaskTest.php`
+
+**Pour Ely**
+- Il n'y a pas encore de lien vers la page : à ajouter dans le layout et sur `teams/show`, avec `route('tasks.index', team.id)`.
+- Pour la voir avant : `php artisan migrate:fresh --seed`, se connecter avec `test@example.com`, aller sur `/teams/1/tasks`.
+
+**A faire**
+- Pour l'instant le statut se choisit à la main dans le formulaire. B2 doit le calculer à partir des étapes.
+- Les messages d'erreur des tâches sont en français dans `StoreTaskRequest`, en attendant la traduction générale (A5).
+- Le seeder donne des noms de tâches en faux latin (Faker), à remplacer si on s'en sert pour la démo.
+
     
