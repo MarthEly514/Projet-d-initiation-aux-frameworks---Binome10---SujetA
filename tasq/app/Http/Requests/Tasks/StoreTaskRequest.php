@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Tasks;
 
-use App\Enums\TaskStatus;
 use App\Models\Task;
 use App\Models\Team;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -30,7 +29,6 @@ class StoreTaskRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
-            'status' => ['required', Rule::enum(TaskStatus::class)],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
             'lead_id' => ['required', 'integer', $this->memberOfTeam()],
@@ -50,8 +48,6 @@ class StoreTaskRequest extends FormRequest
             'name.required' => 'Donnez un nom à la tâche.',
             'name.max' => 'Le nom ne doit pas dépasser 255 caractères.',
             'description.max' => 'La description ne doit pas dépasser 5000 caractères.',
-            'status.required' => 'Choisissez un statut.',
-            'status.enum' => 'Ce statut n’existe pas.',
             'start_date.date' => 'Cette date n’est pas valide.',
             'end_date.date' => 'Cette date n’est pas valide.',
             'end_date.after_or_equal' => 'L’échéance ne peut pas précéder la date de début.',
