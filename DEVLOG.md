@@ -293,6 +293,17 @@ Les tests qui affichent une page ont besoin de `npm run build` au moins une fois
 - Pour B3 : la notification `TaskReadyForReview` sera à envoyer quand une tâche passe en review.
 - Les tâches ne sont plus modifiables que par le workflow : ne pas remettre `status` dans `StoreTaskRequest`.
 
+- ## Cephas:
+**B4 : Mes tâches (branche `feat/my-tasks`, partie de `feat/task-workflow`)**
+
+- Route `GET /my-tasks` (nom `my-tasks`), avec `MyTaskController` : tâches où l'utilisateur est responsable ou collaborateur, dans toutes ses teams
+- Filtres : statut et équipe. Une équipe dont il n'est pas membre est ignorée.
+- Une tâche d'une team qu'il a quittée n'apparaît plus.
+- Tri : échéance la plus proche d'abord, tâches sans date à la fin. Les tâches faites restent visibles.
+- `TaskStatus::options()` donne la liste des statuts pour les filtres, à réutiliser pour l'overview.
+- `TaskCard` s'utilise maintenant sans boutons de gestion, et affiche l'équipe si `TaskResource` la reçoit.
+- Tests : `tests/Feature/MyTaskTest.php`
+
 
 ## 2026-10-31
 
