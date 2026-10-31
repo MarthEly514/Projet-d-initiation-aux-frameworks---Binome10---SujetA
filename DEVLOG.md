@@ -208,4 +208,40 @@ composer run dev
 
 - Creation des interfaces de connexion et d'inscription, ajout du logo (public/images/), creation des composantes prores a Tasq (resources/js/components/tasq). A faire: forgot password et les autres, creation des contorlleurs lies aux taches etc.
 
+- ## Cephas:
+**Fondations communes (partie données de REPARTITION.md), sur la branche `fondation_commune`**
+
+- Tables : `teams` (avec `invite_code`), `team_user` (avec `role`), `tasks`, `task_user` (avec `is_lead`), `steps`
+- Modèles : `Team`, `Task`, `Step`, et les relations `teams()` et `tasks()` sur `User`
+- Enums dans `app/Enums` :
+    - `TeamRole` : responsable / collaborateur
+    - `TaskStatus` : a_faire / en_cours / review / faite
+    - `TaskEvent` : created / updated / assigned / status_changed / deleted (les événements à écouter par l'observer)
+- Helpers sur `Team`, à utiliser dans toutes les policies : `hasMember($user)` et `isResponsable($user)`
+- Sur `Task` : `assignees()` donne tous les assignés, `leads()` seulement ceux avec `is_lead`
+- Factories : `Team::factory()->withResponsable($user)`, `Task::factory()->status(...)` et `->overdue()`, `Step::factory()->done()`
+- Seeder : 5 users, 2 teams, 5 tâches par team (une par statut, plus une en retard), avec 3 étapes chacune
+    - Connexion : `test@example.com`, `awa@`, `koffi@`, `marie@` ou `yao@example.com`, mot de passe `password`
+- Tests : `tests/Feature/FondationsTest.php`
+
+**Pour reprendre**
+```bash
+php artisan migrate:fresh --seed
+php artisan test --compact
+```
+Les tests qui affichent une page ont besoin de `npm run build` au moins une fois (sinon erreur Vite manifest).
+
+**Choix faits dans les colonnes**
+- Le responsable d'une tâche n'a pas de colonne `responsibleId` : c'est la ligne de `task_user` avec `is_lead = true`. Il faudra vérifier qu'il n'y en a qu'un seul à l'assignation (B1).
+- L'échéance est `end_date`, comme `endDate` dans le modèle de départ.
+- `activity_logs` et la table des notifications ne sont pas créées : elles restent avec A4 et B3.
+
+**A faire / à trancher**
+- Layout de l'app (sidebar, en-tête) : pas fait ici.
+- Une tâche sans étape : comment change-t-elle de statut ?
+- Après un `reject` : que deviennent les étapes cochées ?
+- Un membre retiré de la team : que deviennent ses tâches ?
+- Base MySQL de XAMPP : pas encore essayée, seulement SQLite.
+- `npx tsc --noEmit` signale déjà une erreur dans `welcome.tsx` (`plus-darker`), hors de ce travail.
+
     
