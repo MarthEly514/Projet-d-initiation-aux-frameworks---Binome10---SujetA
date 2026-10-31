@@ -80,6 +80,20 @@ class Task extends Model
     }
 
     /**
+     * Replace the assignees of the task, keeping a single lead.
+     *
+     * @param  array<int, int|string>  $collaboratorIds
+     */
+    public function syncAssignees(int $leadId, array $collaboratorIds = []): void
+    {
+        $assignees = collect($collaboratorIds)
+            ->mapWithKeys(fn (int|string $id) => [(int) $id => ['is_lead' => false]])
+            ->put($leadId, ['is_lead' => true]);
+
+        $this->assignees()->sync($assignees->all());
+    }
+
+    /**
      * @return HasMany<Step, $this>
      */
     public function steps(): HasMany
