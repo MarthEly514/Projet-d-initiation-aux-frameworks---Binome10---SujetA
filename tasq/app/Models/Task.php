@@ -79,6 +79,11 @@ class Task extends Model
         return $this->assignees()->wherePivot('is_lead', true);
     }
 
+    public function isRejected(): bool
+    {
+        return $this->rejection_comment !== null;
+    }
+
     /**
      * Replace the assignees of the task, keeping a single lead.
      *
