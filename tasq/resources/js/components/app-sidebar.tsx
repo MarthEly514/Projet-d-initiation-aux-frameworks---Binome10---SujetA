@@ -1,40 +1,35 @@
-import { NavFooter } from '@/components/nav-footer';
-import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
+import AppLogo from '@/components/app-logo';
+import { NavMain, type SidebarNavItem } from '@/components/nav-main';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
-import AppLogo from './app-logo';
+import { Link, usePage } from '@inertiajs/react';
+import { CalendarRange, ClipboardList, Gauge, LayoutGrid, ListChecks, LogOut, Settings, Users, UsersRound } from 'lucide-react';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        url: '/dashboard',
-        icon: LayoutGrid,
-    },
+const generalNav: SidebarNavItem[] = [
+    { title: 'Accueil', url: '/dashboard', icon: LayoutGrid },
+    { title: 'Mes tâches', url: '/my-tasks', icon: ClipboardList },
+    { title: 'Teams', url: '/teams', icon: Users, exact: true },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        url: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        url: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
-    },
+const teamNav = (id: string): SidebarNavItem[] => [
+    { title: 'Overview', url: `/teams/${id}/overview`, icon: Gauge },
+    { title: 'Tâches', url: `/teams/${id}/tasks`, icon: ListChecks },
+    { title: 'Timeline', url: `/teams/${id}/timeline`, icon: CalendarRange },
+    { title: 'Collabs', url: `/teams/${id}/members`, icon: UsersRound },
 ];
+
+const footerNav: SidebarNavItem[] = [{ title: 'Paramètres', url: '/settings/profile', icon: Settings }];
 
 export function AppSidebar() {
+    const { url } = usePage();
+    // Team section appears only inside /teams/{id}/...
+    const teamId = url.match(/^\/teams\/(\d+)/)?.[1];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
+            <SidebarHeader className="px-4 pt-6 pb-15">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+                        <SidebarMenuButton size="lg" asChild className='hover:bg-transparent'>
                             <Link href="/dashboard" prefetch>
                                 <AppLogo />
                             </Link>
@@ -44,12 +39,27 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={generalNav} />
+                {teamId && <NavMain label="Team en cours" items={teamNav(teamId)} />}
             </SidebarContent>
 
-            <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
-                <NavUser />
+            <SidebarFooter className="pb-4">
+                <NavMain items={footerNav} />
+                <SidebarMenu className="px-3">
+                    <SidebarMenuItem>
+                        <SidebarMenuButton
+                            asChild
+                            size="lg"
+                            tooltip={{ children: 'Déconnexion' }}
+                            className="text-muted-foreground gap-5 px-6 rounded-2xl text-[15px] hover:text-red-400/80 hover:bg-red-400/10 [&>svg]:size-5"
+                        >
+                            <Link method="post" href={route('logout')} as="button">
+                                <LogOut />
+                                <span>Déconnexion</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
             </SidebarFooter>
         </Sidebar>
     );
