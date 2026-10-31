@@ -50,6 +50,27 @@ class TaskController extends Controller
     }
 
     /**
+     * Show a task with its steps and what the user can do on it.
+     */
+    public function show(Request $request, Task $task): Response
+    {
+        Gate::authorize('view', $task);
+
+        $user = $request->user();
+
+        return Inertia::render('tasks/show', [
+            'team' => $task->team->only('id', 'name'),
+            'task' => (new TaskResource($task->load(['assignees', 'steps'])))->resolve(),
+            'can' => [
+                'manageSteps' => $user->can('manageSteps', $task),
+                'work' => $user->can('work', $task),
+                'submit' => $user->can('submit', $task),
+                'review' => $user->can('review', $task),
+            ],
+        ]);
+    }
+
+    /**
      * Create a task in the team.
      */
     public function store(StoreTaskRequest $request, Team $team): RedirectResponse
