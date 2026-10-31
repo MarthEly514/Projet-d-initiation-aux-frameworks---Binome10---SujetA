@@ -10,8 +10,7 @@ Deux points à régler dans le layout, vus en testant la page des tâches. Je n'
 
 En mode clair, la barre latérale reste noire, mais une partie de son texte est sombre :
 - le nom « Tasq » dans le logo est presque invisible ;
-- l'entrée active du menu (par exemple « Tâches ») est presque invisible, alors que c'est celle qu'il faut repérer ;
-- une barre de défilement blanche apparaît dans le menu.
+- l'entrée active du menu (par exemple « Tâches ») est presque invisible, alors que c'est celle qu'il faut repérer.
 
 En mode sombre, tout est correct.
 
@@ -29,7 +28,11 @@ En mode clair, `foreground` est presque noir : on obtient du noir sur du noir.
 - **La barre suit le thème :** remplacer `bg-[#171717]` par `bg-sidebar`, qui est déjà défini pour le clair et le sombre.
 - **La barre reste toujours noire :** garder le fond et mettre le texte actif et le logo en blanc (`data-[active=true]:text-white`, `text-white` sur le logo).
 
-À toi de choisir selon la DA voulue. La barre de défilement est à vérifier ensuite : `[scrollbar-width:none]` sur `SidebarContent` la retire si elle reste visible.
+À toi de choisir selon la DA voulue.
+
+**Déjà corrigé : la barre de défilement**
+
+Le menu devait défiler et sa barre était épaisse et blanche. Dans `nav-main.tsx` et `app-sidebar.tsx`, j'ai réduit les entrées à 40 px et les espacements, pour que tout le menu tienne sans défiler. Dans `app.css`, les barres de défilement de toute l'app sont maintenant fines (6 px) et discrètes.
 
 **À voir aussi**
 
