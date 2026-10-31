@@ -2,12 +2,10 @@
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
-
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import FormCard from '@/components/tasq/form-card';
+import { LabelInput } from '@/components/tasq/label-input';
+import { Button } from '@/components/tasq/button';
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -24,13 +22,29 @@ export default function ConfirmPassword() {
 
     return (
         <AuthLayout
-            title="Confirm your password"
+            title="Confirmez votre mot de passe"
             description="This is a secure area of the application. Please confirm your password before continuing."
         >
-            <Head title="Confirm password" />
+            <Head title="Confirmez votre mot de passe" />
 
-            <form onSubmit={submit}>
-                <div className="space-y-6">
+            <FormCard onSubmit={submit}>
+                <LabelInput
+                    label="Mot de passe"
+                    type="password"
+                    required
+                    autoFocus
+                    tabIndex={1}
+                    autoComplete="current-password"
+                    value={data.password}
+                    onChange={(e) => setData('password', e.target.value)}
+                    error={errors.password}
+                />
+
+                <Button className="mt-5 w-full" disabled={processing}>
+                    {processing && <LoaderCircle className="animate-spin" />}
+                    Confirmer le mot de passe
+                </Button>
+                {/* <div className="space-y-6">
                     <div className="grid gap-2">
                         <Label htmlFor="password">Password</Label>
                         <Input
@@ -53,8 +67,8 @@ export default function ConfirmPassword() {
                             Confirm password
                         </Button>
                     </div>
-                </div>
-            </form>
+                </div> */}
+            </FormCard>
         </AuthLayout>
     );
 }

@@ -6,6 +6,7 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/tasq/button';
 import { LabelInput } from '@/components/tasq/label-input';
 import AuthLayout from '@/layouts/auth-layout';
+import FormCard from '@/components/tasq/form-card';
 
 type LoginForm = {
     email: string;
@@ -38,7 +39,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
             {status && <div className="text-center text-sm font-medium text-green-600">{status}</div>}
 
-            <form onSubmit={submit} className="bg-foreground/5 flex flex-col gap-7.5 rounded-[45px] p-8">
+            <FormCard onSubmit={submit}>
                 <LabelInput
                     label="Email"
                     type="email"
@@ -66,7 +67,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     {processing && <LoaderCircle className="animate-spin" />}
                     Connexion
                 </Button>
-            </form>
+            </FormCard>
 
             <div className="text-muted-foreground flex flex-col items-start pl-10 gap-2 text-sm">
                 {canResetPassword && (

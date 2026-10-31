@@ -6,6 +6,7 @@ import { Button } from '@/components/tasq/button';
 import { LabelInput } from '@/components/tasq/label-input';
 import TextLink from '@/components/text-link';
 import AuthLayout from '@/layouts/auth-layout';
+import FormCard from '@/components/tasq/form-card';
 
 type RegisterForm = {
     name: string;
@@ -33,7 +34,7 @@ export default function Register() {
         <AuthLayout title="Créer un compte">
             <Head title="Inscription" />
 
-            <form onSubmit={submit} className="bg-foreground/5 flex flex-col gap-6 rounded-[2rem] p-8">
+            <FormCard onSubmit={submit}>
                 <LabelInput
                     label="Nom complet"
                     type="text"
@@ -87,7 +88,7 @@ export default function Register() {
                     {processing && <LoaderCircle className="animate-spin" />}
                     Créer mon compte
                 </Button>
-            </form>
+            </FormCard>
 
             <div className="text-muted-foreground text-center text-sm">
                 Déjà un compte ?{' '}
