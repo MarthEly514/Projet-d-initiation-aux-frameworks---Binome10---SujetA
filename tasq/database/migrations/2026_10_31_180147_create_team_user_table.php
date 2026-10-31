@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('team_user', function (Blueprint $table) {
-            $table->id();
+            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('role')->default('collaborateur'); // responsable | collaborateur
             $table->timestamps();
+
+            $table->primary(['team_id', 'user_id']);
         });
     }
 
