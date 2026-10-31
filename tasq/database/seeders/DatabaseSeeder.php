@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
     }
 
     /**
-     * Create a team with one task per status, and one overdue task.
+     * Create a team with one task per status, one overdue task and one without steps.
      *
      * @param  list<User>  $collaborateurs
      */
@@ -60,6 +60,10 @@ class DatabaseSeeder extends Seeder
 
         $this->assign($overdue, $collaborateurs[0]);
         $this->addSteps($overdue, 1);
+
+        $withoutSteps = Task::factory()->for($team)->create();
+
+        $this->assign($withoutSteps, $collaborateurs[0]);
     }
 
     private function assign(Task $task, User $lead): void
