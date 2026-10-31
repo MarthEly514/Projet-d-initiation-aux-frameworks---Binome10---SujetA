@@ -5,6 +5,7 @@ interface AppLayoutProps {
     children: React.ReactNode;
     breadcrumbs?: BreadcrumbItem[];
     title?: string;
+    onCreateTask?: () => void;
 }
 
 export default ({ children, breadcrumbs, title, ...props }: AppLayoutProps) => (

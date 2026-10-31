@@ -8,11 +8,11 @@ Chaque dev livre des features complètes, de bout en bout : migration, contrôle
 
 À faire avant de se séparer :
 
-- [ ] **Migrations, modèles, relations, Enums, factories** (tables pivot `team_user` et `task_user` incluses)
-- [ ] **Seeder** : 2 teams, 5 users, tâches à tous les statuts (chacun travaille ainsi sans attendre l'autre)
-- [ ] **Helpers partagés** sur `Team` : `isResponsable($user)`, `hasMember($user)`, utilisés par toutes les policies
+- [x] **Migrations, modèles, relations, Enums, factories** (tables pivot `team_user` et `task_user` incluses)
+- [x] **Seeder** : 2 teams, 5 users, tâches à tous les statuts (chacun travaille ainsi sans attendre l'autre)
+- [x] **Helpers partagés** sur `Team` : `isResponsable($user)`, `hasMember($user)`, utilisés par toutes les policies
 - [x] **Layout de l'app** : sidebar, en-tête, liens vers les futures pages
-- [ ] **Événements de tâche** à écouter par l'observer : créée, modifiée, assignée, statut changé, supprimée
+- [x] **Événements de tâche** à écouter par l'observer : créée, modifiée, assignée, statut changé, supprimée
 
 Un dev fait migrations, modèles et seeder pendant que l'autre fait le layout, puis relecture croisée.
 

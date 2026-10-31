@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('task_id')->constrained()->cascadeOnDelete();
             $table->string('title');
+            $table->boolean('is_done')->default(false);
             $table->unsignedInteger('position')->default(0);
-            $table->timestamp('done_at')->nullable(); // done when not null
             $table->timestamps();
         });
     }

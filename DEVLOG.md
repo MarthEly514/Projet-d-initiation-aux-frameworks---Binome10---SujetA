@@ -208,6 +208,69 @@ composer run dev
 
 - Creation des interfaces de connexion et d'inscription, ajout du logo (public/images/), creation des composantes prores a Tasq (resources/js/components/tasq). A faire: forgot password et les autres, creation des contorlleurs lies aux taches etc.
 
+- ## Cephas:
+**Fondations communes (partie données de REPARTITION.md), sur la branche `fondation_commune`**
+
+- Tables : `teams` (avec `invite_code`), `team_user` (avec `role`), `tasks`, `task_user` (avec `is_lead`), `steps`
+- Modèles : `Team`, `Task`, `Step`, et les relations `teams()` et `tasks()` sur `User`
+- Enums dans `app/Enums` :
+    - `TeamRole` : responsable / collaborateur
+    - `TaskStatus` : a_faire / en_cours / review / faite
+    - `TaskEvent` : created / updated / assigned / status_changed / deleted (les événements à écouter par l'observer)
+- Helpers sur `Team`, à utiliser dans toutes les policies : `hasMember($user)` et `isResponsable($user)`
+- Sur `Task` : `assignees()` donne tous les assignés, `leads()` seulement ceux avec `is_lead`
+- Factories : `Team::factory()->withResponsable($user)`, `Task::factory()->status(...)` et `->overdue()`, `Step::factory()->done()`
+- Seeder : 5 users, 2 teams, 5 tâches par team (une par statut, plus une en retard), avec 3 étapes chacune
+    - Connexion : `test@example.com`, `awa@`, `koffi@`, `marie@` ou `yao@example.com`, mot de passe `password`
+- Tests : `tests/Feature/FondationsTest.php`
+
+**Pour reprendre**
+```bash
+php artisan migrate:fresh --seed
+php artisan test --compact
+```
+Les tests qui affichent une page ont besoin de `npm run build` au moins une fois (sinon erreur Vite manifest).
+
+**Choix faits dans les colonnes**
+- Le responsable d'une tâche n'a pas de colonne `responsibleId` : c'est la ligne de `task_user` avec `is_lead = true`. Il faudra vérifier qu'il n'y en a qu'un seul à l'assignation (B1).
+- L'échéance est `end_date`, comme `endDate` dans le modèle de départ.
+- `activity_logs` et la table des notifications ne sont pas créées : elles restent avec A4 et B3.
+
+**A faire / à trancher**
+- Layout de l'app (sidebar, en-tête) : pas fait ici.
+- Une tâche sans étape : comment change-t-elle de statut ?
+- Après un `reject` : que deviennent les étapes cochées ?
+- Un membre retiré de la team : que deviennent ses tâches ?
+- Base MySQL de XAMPP : pas encore essayée, seulement SQLite.
+- `npx tsc --noEmit` signale déjà une erreur dans `welcome.tsx` (`plus-darker`), hors de ce travail.
+
+- ## Cephas:
+**B1 : Tâches (branche `feat/tasks`, partie de `fondation_commune`)**
+
+- Routes dans `routes/tasks.php` :
+    - `GET /teams/{team}/tasks?status=&responsible=` : liste filtrée, pour tout membre
+    - `POST /teams/{team}/tasks`, `PUT /tasks/{task}`, `DELETE /tasks/{task}` : pour le responsable de la team
+- `TaskPolicy`, `StoreTaskRequest`, `UpdateTaskRequest` : le responsable et les collaborateurs d'une tâche doivent être membres de sa team
+- `Task::syncAssignees($leadId, $collaboratorIds)` : garantit un seul responsable par tâche, à réutiliser partout où on assigne
+- `TaskResource` : forme d'une tâche envoyée au frontend (à réutiliser pour `/my-tasks` et l'overview)
+- Frontend : `pages/tasks/index.tsx`, `components/tasks/` (carte et dialogues), `types/task.d.ts`
+- Nouveaux composants partagés dans `components/tasq/`, à réutiliser pour garder la même DA que les pages d'authentification :
+    - `LabelSelect` et `LabelTextarea` : mêmes champs soulignés à label flottant que `LabelInput`
+    - `Modal` : fenêtre arrondie comme `FormCard`, titre en 32 px
+    - `StatusBadge` : statuts en noir et bleu `brand` uniquement
+- Repères de la DA : titre de page `text-5xl`, blocs `bg-foreground/5 rounded-[2rem] p-8` sans bordure, espacements `gap-6` et `gap-8`, boutons taille par défaut (48 px)
+- Tests : `tests/Feature/TaskTest.php`
+
+**Pour Ely**
+- Le bouton + de `AppTopbar` reçoit `onCreateTask` via `AppLayout` : il ouvre la création sur la page des tâches, si l'utilisateur est responsable. Ailleurs il ne fait encore rien, il faudra choisir la team.
+- La page utilise `title` de `AppLayout` pour le titre, et les marges du layout.
+- Pour y aller tant que `/teams` n'existe pas : `php artisan migrate:fresh --seed`, se connecter avec `test@example.com`, aller sur `/teams/1/tasks`.
+
+**A faire**
+- Pour l'instant le statut se choisit à la main dans le formulaire. B2 doit le calculer à partir des étapes.
+- Les messages d'erreur des tâches sont en français dans `StoreTaskRequest`, en attendant la traduction générale (A5).
+- Le seeder donne des noms de tâches en faux latin (Faker), à remplacer si on s'en sert pour la démo.
+
 
 ## 2026-10-31
 

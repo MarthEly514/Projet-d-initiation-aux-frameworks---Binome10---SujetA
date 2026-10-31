@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\TaskStatus;
 use App\Models\Task;
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -13,20 +14,39 @@ class TaskFactory extends Factory
 {
     /**
      * Define the model's default state.
-    *
-    * @return array<string, mixed>
-    */
+     *
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
-        $start = fake()->dateTimeBetween('-1 week', '+1 week');
-
         return [
             'team_id' => Team::factory(),
             'name' => fake()->sentence(3),
-            'description' => fake()->optional()->paragraph(),
-            'status' => fake()->randomElement(['a_faire', 'en_cours', 'review', 'faite']),
-            'start_date' => $start,
-            'end_date' => (clone $start)->modify('+' . fake()->numberBetween(2, 14) . ' days'),
+            'description' => fake()->paragraph(),
+            'status' => TaskStatus::AFaire,
+            'start_date' => now(),
+            'end_date' => now()->addWeek(),
         ];
+    }
+
+    /**
+     * Set the status of the task.
+     */
+    public function status(TaskStatus $status): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => $status,
+        ]);
+    }
+
+    /**
+     * Indicate that the due date of the task has passed.
+     */
+    public function overdue(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'start_date' => now()->subWeeks(2),
+            'end_date' => now()->subDays(3),
+        ]);
     }
 }

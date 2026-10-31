@@ -3,64 +3,40 @@
 namespace App\Policies;
 
 use App\Models\Task;
+use App\Models\Team;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class TaskPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * Any member of the team can list its tasks.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user, Team $team): bool
     {
-        return false;
+        return $team->hasMember($user);
     }
 
     /**
-     * Determine whether the user can view the model.
+     * Only a responsable of the team can create a task in it.
      */
-    public function view(User $user, Task $task): bool
+    public function create(User $user, Team $team): bool
     {
-        return false;
+        return $team->isResponsable($user);
     }
 
     /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can update the model.
+     * Only a responsable of the task's team can update it.
      */
     public function update(User $user, Task $task): bool
     {
-        return false;
+        return $task->team->isResponsable($user);
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * Only a responsable of the task's team can delete it.
      */
     public function delete(User $user, Task $task): bool
     {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Task $task): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Task $task): bool
-    {
-        return false;
+        return $task->team->isResponsable($user);
     }
 }

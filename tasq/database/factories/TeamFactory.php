@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\TeamRole;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,8 +20,19 @@ class TeamFactory extends Factory
     public function definition(): array
     {
         return [
-            //
-            'name'=>fake()->unique()->company(),
+            'name' => fake()->company(),
         ];
+    }
+
+    /**
+     * Attach the given user to the team as responsable.
+     */
+    public function withResponsable(?User $user = null): static
+    {
+        return $this->afterCreating(function (Team $team) use ($user): void {
+            $team->members()->attach($user ?? User::factory()->create(), [
+                'role' => TeamRole::Responsable->value,
+            ]);
+        });
     }
 }
