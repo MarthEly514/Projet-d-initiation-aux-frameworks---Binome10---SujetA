@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { Pencil, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/tasq/button';
@@ -11,7 +12,7 @@ interface TaskCardProps {
     onDelete: () => void;
 }
 
-function formatDate(date: string): string {
+export function formatDate(date: string): string {
     return date.split('-').reverse().join('/');
 }
 
@@ -19,7 +20,9 @@ export default function TaskCard({ task, canManage, onEdit, onDelete }: TaskCard
     return (
         <li className="bg-foreground/5 flex flex-wrap items-center gap-x-6 gap-y-4 rounded-[2rem] p-8">
             <div className="min-w-0 flex-1 basis-64 space-y-2">
-                <p className="text-[16px] font-medium [overflow-wrap:anywhere]">{task.name}</p>
+                <Link href={route('tasks.show', task.id)} className="hover:text-brand block text-[16px] font-medium transition-colors [overflow-wrap:anywhere]">
+                    {task.name}
+                </Link>
                 <p className="text-muted-foreground text-sm">
                     {task.lead?.name ?? 'Sans responsable'}
                     {task.end_date && ` · Échéance le ${formatDate(task.end_date)}`}

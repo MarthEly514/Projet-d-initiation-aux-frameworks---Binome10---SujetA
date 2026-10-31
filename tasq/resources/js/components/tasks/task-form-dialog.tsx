@@ -10,14 +10,13 @@ import { LabelTextarea } from '@/components/tasq/label-textarea';
 import { Modal } from '@/components/tasq/modal';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { type Task, type TaskMember, type TaskStatus, type TaskStatusOption } from '@/types/task';
+import { type Task, type TaskMember } from '@/types/task';
 
 interface TaskFormDialogProps {
     open: boolean;
     teamId: number;
     task: Task | null;
     members: TaskMember[];
-    statuses: TaskStatusOption[];
     onClose: () => void;
 }
 
@@ -29,11 +28,10 @@ export default function TaskFormDialog({ open, onClose, ...props }: TaskFormDial
     );
 }
 
-function TaskForm({ teamId, task, members, statuses, onClose }: Omit<TaskFormDialogProps, 'open'>) {
+function TaskForm({ teamId, task, members, onClose }: Omit<TaskFormDialogProps, 'open'>) {
     const { data, setData, post, put, processing, errors } = useForm({
         name: task?.name ?? '',
         description: task?.description ?? '',
-        status: task?.status ?? ('a_faire' as TaskStatus),
         start_date: task?.start_date ?? '',
         end_date: task?.end_date ?? '',
         lead_id: task?.lead ? String(task.lead.id) : '',
@@ -77,24 +75,14 @@ function TaskForm({ teamId, task, members, statuses, onClose }: Omit<TaskFormDia
                 <LabelInput label="Échéance" type="date" value={data.end_date} onChange={(e) => setData('end_date', e.target.value)} error={errors.end_date} />
             </div>
 
-            <div className="grid items-start gap-6 sm:grid-cols-2">
-                <LabelSelect
-                    id="status"
-                    label="Statut"
-                    value={data.status}
-                    options={statuses}
-                    onValueChange={(value) => setData('status', value as TaskStatus)}
-                    error={errors.status}
-                />
-                <LabelSelect
-                    id="lead_id"
-                    label="Responsable"
-                    value={data.lead_id}
-                    options={members.map((member) => ({ value: String(member.id), label: member.name }))}
-                    onValueChange={selectLead}
-                    error={errors.lead_id}
-                />
-            </div>
+            <LabelSelect
+                id="lead_id"
+                label="Responsable"
+                value={data.lead_id}
+                options={members.map((member) => ({ value: String(member.id), label: member.name }))}
+                onValueChange={selectLead}
+                error={errors.lead_id}
+            />
 
             {collaborators.length > 0 && (
                 <fieldset className="grid gap-3">
