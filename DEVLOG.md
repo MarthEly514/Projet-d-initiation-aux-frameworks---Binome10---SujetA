@@ -262,8 +262,9 @@ Les tests qui affichent une page ont besoin de `npm run build` au moins une fois
 - Tests : `tests/Feature/TaskTest.php`
 
 **Pour Ely**
-- Il n'y a pas encore de lien vers la page : à ajouter dans le layout et sur `teams/show`, avec `route('tasks.index', team.id)`.
-- Pour la voir avant : `php artisan migrate:fresh --seed`, se connecter avec `test@example.com`, aller sur `/teams/1/tasks`.
+- Le bouton + de `AppTopbar` reçoit `onCreateTask` via `AppLayout` : il ouvre la création sur la page des tâches, si l'utilisateur est responsable. Ailleurs il ne fait encore rien, il faudra choisir la team.
+- La page utilise `title` de `AppLayout` pour le titre, et les marges du layout.
+- Pour y aller tant que `/teams` n'existe pas : `php artisan migrate:fresh --seed`, se connecter avec `test@example.com`, aller sur `/teams/1/tasks`.
 
 **A faire**
 - Pour l'instant le statut se choisit à la main dans le formulaire. B2 doit le calculer à partir des étapes.
