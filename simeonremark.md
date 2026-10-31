@@ -1,6 +1,6 @@
 # Remarques de Siméon sur le layout
 
-Deux points à régler dans le layout, vus en testant la page des tâches. Je n'y ai pas touché, car le layout est dans ta partie.
+Trois points à régler dans le layout, vus en testant les pages des tâches. Je n'y ai pas touché, car le layout est dans ta partie.
 
 ---
 
@@ -40,7 +40,23 @@ Le panneau gauche de `resources/js/layouts/auth/auth-simple-layout.tsx` a le mê
 
 ---
 
-## 2. Le bouton + de l'en-tête
+## 2. Le fond noir se coupe quand la page défile
+
+**Le problème**
+
+En mode clair, sur une page longue, le fond noir de la barre latérale s'arrête quand on fait défiler la page. Le menu reste en place, mais le bas de la barre devient blanc. On le voit bien sur la page d'une tâche.
+
+**La cause**
+
+Dans `resources/js/components/ui/sidebar.tsx`, `bg-[#171717]` est sur l'élément de la ligne 196, qui défile avec la page. Le menu, lui, est dans l'élément `fixed` de la ligne 206.
+
+**La solution**
+
+Mettre le fond sur l'élément `fixed` de la ligne 206. Si tu choisis `bg-sidebar` au point 1, fais le même déplacement.
+
+---
+
+## 3. Le bouton + de l'en-tête
 
 **Ce que j'ai fait**
 

@@ -220,7 +220,7 @@ composer run dev
 - Helpers sur `Team`, à utiliser dans toutes les policies : `hasMember($user)` et `isResponsable($user)`
 - Sur `Task` : `assignees()` donne tous les assignés, `leads()` seulement ceux avec `is_lead`
 - Factories : `Team::factory()->withResponsable($user)`, `Task::factory()->status(...)` et `->overdue()`, `Step::factory()->done()`
-- Seeder : 5 users, 2 teams, 5 tâches par team (une par statut, plus une en retard), avec 3 étapes chacune
+- Seeder : 5 users, 2 teams, 6 tâches par team (une par statut, une en retard, une sans étape), avec 3 étapes pour les tâches qui en ont
     - Connexion : `test@example.com`, `awa@`, `koffi@`, `marie@` ou `yao@example.com`, mot de passe `password`
 - Tests : `tests/Feature/FondationsTest.php`
 
@@ -238,8 +238,6 @@ Les tests qui affichent une page ont besoin de `npm run build` au moins une fois
 
 **A faire / à trancher**
 - Layout de l'app (sidebar, en-tête) : pas fait ici.
-- Une tâche sans étape : comment change-t-elle de statut ?
-- Après un `reject` : que deviennent les étapes cochées ?
 - Un membre retiré de la team : que deviennent ses tâches ?
 - Base MySQL de XAMPP : pas encore essayée, seulement SQLite.
 - `npx tsc --noEmit` signale déjà une erreur dans `welcome.tsx` (`plus-darker`), hors de ce travail.
@@ -267,9 +265,33 @@ Les tests qui affichent une page ont besoin de `npm run build` au moins une fois
 - Pour y aller tant que `/teams` n'existe pas : `php artisan migrate:fresh --seed`, se connecter avec `test@example.com`, aller sur `/teams/1/tasks`.
 
 **A faire**
-- Pour l'instant le statut se choisit à la main dans le formulaire. B2 doit le calculer à partir des étapes.
 - Les messages d'erreur des tâches sont en français dans `StoreTaskRequest`, en attendant la traduction générale (A5).
 - Le seeder donne des noms de tâches en faux latin (Faker), à remplacer si on s'en sert pour la démo.
+
+- ## Cephas:
+**B2 : Étapes et statut (branche `feat/task-workflow`, partie de `feat/tasks`)**
+
+**Règles retenues**
+- Le statut ne se choisit plus à la main : il a été retiré du formulaire de tâche.
+- Tâche avec étapes : aucune cochée = à faire, au moins une = en cours, toutes = review.
+- Tâche sans étape : un seul bouton « Marquer comme terminée », qui la passe en review.
+- Seul le responsable de la team valide (review → faite) ou renvoie (review → en cours).
+- Un renvoi exige un commentaire, qui indique les étapes à reprendre. Les étapes restent cochées.
+- Une tâche renvoyée ne repart pas seule en review : un assigné doit cliquer sur « Renvoyer en validation » quand tout est coché. Le commentaire est alors effacé.
+- Une tâche faite est verrouillée : plus de coche ni de changement d'étape.
+
+**Fichiers**
+- `app/Services/TaskStatusService.php` : toutes les règles de statut sont ici, à ne pas dupliquer
+- `TaskPolicy` : ajout de `view`, `manageSteps`, `work`, `submit`, `review`
+- `StepController` et `TaskWorkflowController`, routes dans `routes/tasks.php`
+- Migration : `rejection_comment` sur `tasks`
+- Frontend : `pages/tasks/show.tsx`, `components/tasks/step-list.tsx`, `components/tasks/reject-task-dialog.tsx`
+- Tests : `tests/Feature/TaskWorkflowTest.php`
+
+**Pour Ely**
+- Pour l'observer (A4) : un changement de statut passe toujours par `Task::save()` ou `update()`, donc il se voit sur le champ `status`.
+- Pour B3 : la notification `TaskReadyForReview` sera à envoyer quand une tâche passe en review.
+- Les tâches ne sont plus modifiables que par le workflow : ne pas remettre `status` dans `StoreTaskRequest`.
 
 
 ## 2026-10-31

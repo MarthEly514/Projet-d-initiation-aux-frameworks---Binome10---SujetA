@@ -18,7 +18,6 @@ beforeEach(function () {
     $this->payload = fn (array $overrides = []) => [
         'name' => 'Préparer la démo',
         'description' => 'Pour vendredi',
-        'status' => TaskStatus::AFaire->value,
         'start_date' => '2026-11-02',
         'end_date' => '2026-11-06',
         'lead_id' => $this->collaborateur->id,
@@ -126,7 +125,6 @@ test('a task cannot be created with invalid data', function (array $overrides, s
     expect(Task::count())->toBe(0);
 })->with([
     'no name' => [['name' => ''], 'name'],
-    'unknown status' => [['status' => 'inconnu'], 'status'],
     'no lead' => [['lead_id' => null], 'lead_id'],
     'due date before start date' => [['end_date' => '2026-11-01'], 'end_date'],
 ]);
@@ -163,7 +161,6 @@ test('a responsable updates a task and replaces its assignees', function () {
     $this->actingAs($this->responsable)
         ->put(route('tasks.update', $task), ($this->payload)([
             'name' => 'Démo reportée',
-            'status' => TaskStatus::EnCours->value,
             'lead_id' => $this->responsable->id,
         ]))
         ->assertSessionHasNoErrors();
@@ -171,9 +168,18 @@ test('a responsable updates a task and replaces its assignees', function () {
     $task->refresh();
 
     expect($task->name)->toBe('Démo reportée')
-        ->and($task->status)->toBe(TaskStatus::EnCours)
         ->and($task->assignees->pluck('id')->all())->toBe([$this->responsable->id])
         ->and($task->leads->pluck('id')->all())->toBe([$this->responsable->id]);
+});
+
+test('the status cannot be forced through the task form', function () {
+    $task = Task::factory()->for($this->team)->create();
+
+    $this->actingAs($this->responsable)
+        ->put(route('tasks.update', $task), ($this->payload)(['status' => TaskStatus::Faite->value]))
+        ->assertSessionHasNoErrors();
+
+    expect($task->refresh()->status)->toBe(TaskStatus::AFaire);
 });
 
 test('a responsable deletes a task', function () {

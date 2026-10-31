@@ -78,7 +78,6 @@ export default function TasksIndex({ team, tasks, members, statuses, filters, ca
                 teamId={team.id}
                 task={editingTask}
                 members={members}
-                statuses={statuses}
                 onClose={() => {
                     setIsCreating(false);
                     setEditingTask(null);
