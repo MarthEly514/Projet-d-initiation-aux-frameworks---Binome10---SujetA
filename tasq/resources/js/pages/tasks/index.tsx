@@ -1,14 +1,11 @@
 import { Head, router } from '@inertiajs/react';
-import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
-import { Button } from '@/components/tasq/button';
 import { LabelSelect } from '@/components/tasq/label-select';
 import DeleteTaskDialog from '@/components/tasks/delete-task-dialog';
 import TaskCard from '@/components/tasks/task-card';
 import TaskFormDialog from '@/components/tasks/task-form-dialog';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
 import { type Task, type TaskFilters, type TaskMember, type TaskStatusOption } from '@/types/task';
 
 const ALL = 'all';
@@ -27,11 +24,6 @@ export default function TasksIndex({ team, tasks, members, statuses, filters, ca
     const [editingTask, setEditingTask] = useState<Task | null>(null);
     const [deletingTask, setDeletingTask] = useState<Task | null>(null);
 
-    const breadcrumbs: BreadcrumbItem[] = [
-        { title: team.name, href: route('tasks.index', team.id) },
-        { title: 'Tâches', href: route('tasks.index', team.id) },
-    ];
-
     const applyFilters = (changes: Partial<TaskFilters>) => {
         const query = { ...filters, ...changes };
 
@@ -45,21 +37,10 @@ export default function TasksIndex({ team, tasks, members, statuses, filters, ca
     const hasFilters = filters.status !== null || filters.responsible !== null;
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppLayout title="Tâches" onCreateTask={canManage ? () => setIsCreating(true) : undefined}>
             <Head title={`Tâches · ${team.name}`} />
 
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 md:p-10">
-                <div className="flex flex-wrap items-center justify-between gap-6">
-                    <h1 className="text-5xl">Tâches</h1>
-
-                    {canManage && (
-                        <Button onClick={() => setIsCreating(true)}>
-                            <Plus />
-                            Nouvelle tâche
-                        </Button>
-                    )}
-                </div>
-
+            <div className="flex flex-1 flex-col gap-8">
                 <div className="flex flex-wrap gap-6">
                     <LabelSelect
                         id="filter-status"

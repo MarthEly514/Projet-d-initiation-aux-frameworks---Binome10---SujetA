@@ -10,7 +10,7 @@ import { ChevronDown, Plus, Search } from 'lucide-react';
 import { DropdownMenuContent } from './tasq/dropdown-menu';
 import { UserMenuContent } from './tasq/user-menu-content';
 
-export function AppTopbar({ title }: { title: string }) {
+export function AppTopbar({ title, onCreateTask }: { title: string; onCreateTask?: () => void }) {
     const { auth } = usePage<SharedData>().props;
     const getInitials = useInitials();
 
@@ -32,8 +32,8 @@ export function AppTopbar({ title }: { title: string }) {
             </div>
 
             <div className="ml-auto flex items-center gap-3">
-                {/* TODO: open the task creation modal (task feature) */}
-                <Button size='icon' aria-label="Nouvelle tâche">
+                {/* Opens the task modal on pages that provide it (tasks page for now) */}
+                <Button size='icon' aria-label="Nouvelle tâche" onClick={onCreateTask}>
                     <Plus />
                 </Button>
 
