@@ -5,12 +5,12 @@ import { FormEventHandler } from 'react';
 
 import DeleteUser from '@/components/delete-user';
 import HeadingSmall from '@/components/heading-small';
-import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import FormCard from '@/components/tasq/form-card';
+import { LabelInput } from '@/components/tasq/label-input';
+import { LoaderCircle } from 'lucide-react';
+import { Button } from '@/components/tasq/button';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -34,46 +34,36 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Profile settings" />
-
+        <AppLayout title="Paramètres">
+            <Head title="Paramètres du profil" />
             <SettingsLayout>
                 <div className="space-y-6">
                     <HeadingSmall title="Profile information" description="Update your name and email address" />
 
-                    <form onSubmit={submit} className="space-y-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="name">Name</Label>
 
-                            <Input
-                                id="name"
-                                className="mt-1 block w-full"
-                                value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
-                                required
-                                autoComplete="name"
-                                placeholder="Full name"
-                            />
-
-                            <InputError className="mt-2" message={errors.name} />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
-
-                            <Input
-                                id="email"
-                                type="email"
-                                className="mt-1 block w-full"
-                                value={data.email}
-                                onChange={(e) => setData('email', e.target.value)}
-                                required
-                                autoComplete="username"
-                                placeholder="Email address"
-                            />
-
-                            <InputError className="mt-2" message={errors.email} />
-                        </div>
+                    <FormCard onSubmit={submit} className='rounded-[2.8rem]'>
+                        <LabelInput
+                            label="Nom complet"
+                            type="name"
+                            required
+                            autoFocus
+                            tabIndex={1}
+                            autoComplete="name"
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
+                            error={errors.name}
+                        />
+                        <LabelInput
+                            label="Email"
+                            type="email"
+                            required
+                            autoFocus
+                            tabIndex={1}
+                            autoComplete="email"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            error={errors.email}
+                        />
 
                         {mustVerifyEmail && auth.user.email_verified_at === null && (
                             <div>
@@ -97,20 +87,20 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                             </div>
                         )}
 
-                        <div className="flex items-center gap-4">
-                            <Button disabled={processing}>Save</Button>
-
-                            <Transition
-                                show={recentlySuccessful}
-                                enter="transition ease-in-out"
-                                enterFrom="opacity-0"
-                                leave="transition ease-in-out"
-                                leaveTo="opacity-0"
-                            >
-                                <p className="text-sm text-neutral-600">Saved</p>
-                            </Transition>
-                        </div>
-                    </form>
+                        <Button type="submit" className="mt-5 bg-accent-foreground text-accent" disabled={processing}>
+                            {processing && <LoaderCircle className="animate-spin" />}
+                            Save
+                        </Button>
+                        <Transition
+                            show={recentlySuccessful}
+                            enter="transition ease-in-out"
+                            enterFrom="opacity-0"
+                            leave="transition ease-in-out"
+                            leaveTo="opacity-0"
+                        >
+                            <p className="text-sm text-neutral-600">Saved</p>
+                        </Transition>
+                    </FormCard>
                 </div>
 
                 <DeleteUser />
