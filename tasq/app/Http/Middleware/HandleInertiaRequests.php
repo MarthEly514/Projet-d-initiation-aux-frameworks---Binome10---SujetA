@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Team;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -45,6 +46,13 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'currentTeam' => function () use ($request) {
+                $team = $request->route('team');
+
+                return $team instanceof Team
+                    ? ['id' => $team->id, 'name' => $team->name]
+                    : null;
+            },
         ]);
     }
 }

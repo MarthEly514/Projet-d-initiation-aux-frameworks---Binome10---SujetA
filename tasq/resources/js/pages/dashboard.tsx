@@ -39,7 +39,7 @@ export default function Dashboard({ teams, counts, overdue, upcoming }: Props) {
     ];
 
     return (
-        <AppLayout title="Overview">
+        <AppLayout title="Dashboard">
             <Head title="Dashboard" />
 
             <section className="flex flex-col gap-4">
@@ -55,7 +55,7 @@ export default function Dashboard({ teams, counts, overdue, upcoming }: Props) {
             </section>
 
             <section className="flex flex-col gap-4">
-                <h2 className="text-lg font-medium">À venir</h2>
+                <h2 className="text-lg font-medium">Tâches à venir</h2>
                 {upcoming.length === 0 ? (
                     <div className="bg-foreground/5 text-muted-foreground rounded-[2rem] px-6 py-10 text-center text-sm">
                         Aucune tâche en cours qui vous soit assignée.

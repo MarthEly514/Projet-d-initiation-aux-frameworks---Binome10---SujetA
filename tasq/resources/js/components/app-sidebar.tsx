@@ -1,11 +1,12 @@
 import AppLogo from '@/components/app-logo';
 import { NavMain, type SidebarNavItem } from '@/components/nav-main';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { CalendarRange, ClipboardList, Gauge, LayoutGrid, ListChecks, LogOut, Settings, Users, UsersRound } from 'lucide-react';
 
 const generalNav: SidebarNavItem[] = [
-    { title: 'Overview', url: '/dashboard', icon: LayoutGrid },
+    { title: 'Dashboard', url: '/dashboard', icon: LayoutGrid },
     { title: 'Mes tâches', url: '/my-tasks', icon: ClipboardList },
     { title: 'Teams', url: '/teams', icon: Users, exact: true },
 ];
@@ -21,12 +22,12 @@ const footerNav: SidebarNavItem[] = [{ title: 'Paramètres', url: '/settings/pro
 
 export function AppSidebar() {
     const { url } = usePage();
-    // Team section appears only inside /teams/{id}/...
     const teamId = url.match(/^\/teams\/(\d+)/)?.[1];
+    const { currentTeam } = usePage<SharedData>().props;
 
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader className="px-4 pt-0 pb-6">
+            <SidebarHeader className="px-4 pt-0 pb-15">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild className='hover:bg-transparent'>
@@ -40,7 +41,8 @@ export function AppSidebar() {
 
             <SidebarContent className="gap-1">
                 <NavMain items={generalNav} />
-                {teamId && <NavMain label="Team en cours" items={teamNav(teamId)} />}
+                <div className='w-full h-6' />
+                {teamId && <NavMain label={currentTeam?.name ?? "Team en cours"} items={teamNav(teamId)} />}
             </SidebarContent>
 
             <SidebarFooter className="gap-1 pb-0">

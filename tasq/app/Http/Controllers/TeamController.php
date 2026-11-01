@@ -21,14 +21,10 @@ class TeamController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request): Response
     {
         $teams = $request->user()->teams()
-            ->withSummary([
-                'members',
-                'tasks',
-                'tasks as done_tasks_count' => fn ($q) => $q->where('status', TaskStatus::Faite->value),
-            ])
+            ->withSummary()
             ->orderBy('teams.name')
             ->get()
             ->map(fn (Team $team) => [
