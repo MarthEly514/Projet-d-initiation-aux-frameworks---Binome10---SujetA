@@ -304,6 +304,22 @@ Les tests qui affichent une page ont besoin de `npm run build` au moins une fois
 - `TaskCard` s'utilise maintenant sans boutons de gestion, et affiche l'équipe si `TaskResource` la reçoit.
 - Tests : `tests/Feature/MyTaskTest.php`
 
+- ## Cephas:
+**B3 : Notifications (branche `feat/notifications`, partie de `feat/my-tasks`)**
+
+- Quand une tâche passe en review, tous les responsables de sa team reçoivent `TaskReadyForReview`. L'envoi est dans `TaskStatusService`.
+- Canal `database` seulement : pas d'e-mail, comme prévu dans la liste « à couper » de `REPARTITION.md`.
+- Routes dans `routes/notifications.php` : `notifications.read` (lire et ouvrir la tâche) et `notifications.read-all`.
+- `HandleInertiaRequests` partage `notifications` (nombre de non lues et 10 dernières) avec toutes les pages.
+- `NotificationBell` ne prend plus de prop : la cloche lit ces données seule.
+- `Team::responsables()` donne les responsables d'une team, et `isResponsable()` l'utilise.
+- Tests : `tests/Feature/NotificationTest.php`
+
+**Pas fait**
+- Le collaborateur n'est pas notifié quand sa tâche est validée ou renvoyée.
+- Un responsable aussi assigné à la tâche reçoit la notification de sa propre action.
+- Si la team est supprimée, ses notifications restent : le clic marque comme lu et reste sur la page.
+
 
 ## 2026-10-31
 
