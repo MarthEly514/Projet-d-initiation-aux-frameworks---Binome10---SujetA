@@ -637,4 +637,6 @@ Pour le favicon, le même dessin est dans `public/favicon.svg`.
     currentTeam: { id: number; name: string, is_responsable: boolean; } | null;
     ```
 
+
+- Creation d'une nouvelle carte de taches pour les vues globales des taches, 
     

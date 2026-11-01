@@ -36,6 +36,8 @@ class TaskResource extends JsonResource
             'collaborators' => $collaborators->map($summary)->values()->all(),
             'team' => $this->whenLoaded('team', fn () => $this->team->only('id', 'name')),
             'steps' => $this->whenLoaded('steps', fn () => $this->steps->map(fn (Step $step) => $step->only('id', 'title', 'is_done'))->all()),
+            'steps_count' => $this->steps_count,
+            'done_steps_count' => $this->done_steps_count,
         ];
     }
 }

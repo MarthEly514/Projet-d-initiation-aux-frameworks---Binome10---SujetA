@@ -5,6 +5,8 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamMemberController;
 use App\Http\Controllers\TimelineController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Tasks\TaskController;
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Teams
@@ -26,5 +28,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('teams/{team}/overview', [OverviewController::class, 'show'])->name('teams.overview');
     Route::get('teams/{team}/timeline', [TimelineController::class, 'show'])->name('teams.timeline');
     
-    Route::get('teams/{team}/tasks', fn () => abort(501))->name('teams.tasks.index'); // TEMP: replace with TaskController@index (B1)
+    Route::get('teams/{team}/tasks', [TaskController::class, 'index'])->name('teams.tasks.index');
 });

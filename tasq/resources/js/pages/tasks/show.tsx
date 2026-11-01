@@ -1,5 +1,5 @@
-import { Head, useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import { Head, router, useForm } from '@inertiajs/react';
+import { ChevronLeft, LoaderCircle } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/tasq/button';
@@ -33,14 +33,23 @@ export default function TasksShow({ team, task, can }: TasksShowProps) {
     const steps = task.steps ?? [];
     const isRejected = task.rejection_comment !== null;
 
+    const goBack = () => {
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        router.visit(route('teams.tasks.index', team.id));
+    }
+};
+
     return (
         <AppLayout title="Tâche">
             <Head title={`${task.name} · ${team.name}`} />
 
             <div className="flex flex-1 flex-col gap-8">
-                <TextLink href={route('tasks.index', team.id)} className="w-fit text-sm">
-                    Retour aux tâches
-                </TextLink>
+                    <Button variant='ghost' className='w-fit' onClick={goBack}>
+                        <ChevronLeft />
+                        Retour
+                    </Button>
 
                 <section className="bg-foreground/5 flex flex-col gap-6 rounded-[2rem] p-8">
                     <div className="flex flex-wrap items-start justify-between gap-4">
