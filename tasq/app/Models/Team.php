@@ -58,6 +58,14 @@ class Team extends Model
     }
 
     /**
+     * @return BelongsToMany<User, $this>
+     */
+    public function responsables(): BelongsToMany
+    {
+        return $this->members()->wherePivot('role', TeamRole::Responsable->value);
+    }
+
+    /**
      * @return HasMany<Task, $this>
      */
     public function tasks(): HasMany
@@ -72,9 +80,6 @@ class Team extends Model
 
     public function isResponsable(User $user): bool
     {
-        return $this->members()
-            ->whereKey($user->id)
-            ->wherePivot('role', TeamRole::Responsable->value)
-            ->exists();
+        return $this->responsables()->whereKey($user->id)->exists();
     }
 }
