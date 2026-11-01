@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Collection;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -45,6 +47,32 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'notifications' => fn () => $this->notifications($request),
         ]);
+    }
+
+    /**
+     * The unread count and the latest notifications of the signed-in user.
+     *
+     * @return array{unread: int, items: Collection<int, array<string, mixed>>}|null
+     */
+    private function notifications(Request $request): ?array
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            return null;
+        }
+
+        return [
+            'unread' => $user->unreadNotifications()->count(),
+            'items' => $user->notifications()->limit(10)->get()->map(fn (DatabaseNotification $notification) => [
+                'id' => $notification->id,
+                'task_name' => $notification->data['task_name'],
+                'team_name' => $notification->data['team_name'],
+                'is_read' => $notification->read(),
+                'date' => $notification->created_at->format('d/m/Y'),
+            ]),
+        ];
     }
 }
