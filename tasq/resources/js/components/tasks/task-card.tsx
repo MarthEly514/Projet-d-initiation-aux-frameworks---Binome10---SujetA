@@ -7,16 +7,16 @@ import { type Task } from '@/types/task';
 
 interface TaskCardProps {
     task: Task;
-    canManage: boolean;
-    onEdit: () => void;
-    onDelete: () => void;
+    canManage?: boolean;
+    onEdit?: () => void;
+    onDelete?: () => void;
 }
 
 export function formatDate(date: string): string {
     return date.split('-').reverse().join('/');
 }
 
-export default function TaskCard({ task, canManage, onEdit, onDelete }: TaskCardProps) {
+export default function TaskCard({ task, canManage = false, onEdit, onDelete }: TaskCardProps) {
     return (
         <li className="bg-foreground/5 flex flex-wrap items-center gap-x-6 gap-y-4 rounded-[2rem] p-8">
             <div className="min-w-0 flex-1 basis-64 space-y-2">
@@ -24,6 +24,7 @@ export default function TaskCard({ task, canManage, onEdit, onDelete }: TaskCard
                     {task.name}
                 </Link>
                 <p className="text-muted-foreground text-sm">
+                    {task.team && `${task.team.name} · `}
                     {task.lead?.name ?? 'Sans responsable'}
                     {task.end_date && ` · Échéance le ${formatDate(task.end_date)}`}
                 </p>

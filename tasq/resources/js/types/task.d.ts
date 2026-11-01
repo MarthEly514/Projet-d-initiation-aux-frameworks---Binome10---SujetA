@@ -27,12 +27,18 @@ export interface Task {
     end_date: string | null;
     lead: TaskMember | null;
     collaborators: TaskMember[];
+    team?: { id: number; name: string };
     steps?: TaskStep[];
 }
 
 export interface TaskFilters {
     status: TaskStatus | null;
     responsible: number | null;
+}
+
+export interface MyTaskFilters {
+    status: TaskStatus | null;
+    team: number | null;
 }
 
 export interface TaskPermissions {

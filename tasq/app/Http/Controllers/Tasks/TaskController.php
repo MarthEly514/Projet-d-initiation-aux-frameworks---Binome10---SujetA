@@ -40,10 +40,7 @@ class TaskController extends Controller
             'team' => $team->only('id', 'name'),
             'tasks' => TaskResource::collection($tasks)->resolve(),
             'members' => $team->members()->orderBy('name')->get()->map(fn (User $user) => $user->only('id', 'name')),
-            'statuses' => collect(TaskStatus::cases())->map(fn (TaskStatus $case) => [
-                'value' => $case->value,
-                'label' => $case->label(),
-            ]),
+            'statuses' => TaskStatus::options(),
             'filters' => ['status' => $status?->value, 'responsible' => $responsibleId],
             'canManage' => $request->user()->can('create', [Task::class, $team]),
         ]);
