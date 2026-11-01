@@ -4,6 +4,10 @@ import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recha
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type MemberWorkload, type OverviewTask, type StatusCount } from '@/types/overview';
+import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount } from '@/components/ui/avatar';
+import { Button } from '@/components/tasq/button';
+import { useInitials } from '@/hooks/use-initials';
+
 
 type Props = {
     team: { id: number; name: string };
@@ -50,24 +54,51 @@ function TaskList({ title, tasks, empty, danger }: { title: string; tasks: Overv
 }
 
 export default function TeamOverview({ team, statuses, total, progress, overdue_count, overdue_tasks, review_tasks, workload }: Props) {
+    const getInitials = useInitials();
+    const MAX_AVATARS = 5;
+    const shown = workload.slice(0, MAX_AVATARS);
+    const extra = workload.length - shown.length;
+
     return (
         <AppLayout title="Overview">
             <Head title={`Overview · ${team.name}`} />
 
             {/* Counters */}
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-                {statuses.map((s) => (
-                    <div key={s.key} className="bg-foreground/5 rounded-[2rem] p-6 relative">
-                        {/* <span className="w-2.5 h-16 rounded-full absolute right-1 top-1/2 -translate-y-1/2 opacity-65" style={{ backgroundColor: COLORS[s.key] }} /> */}
-                        <p className="text-muted-foreground flex items-center gap-2 text-sm">
-                            {s.label}
-                        </p>
-                        <p className="mt-2 text-3xl font-semibold">{s.count}</p>
+            <div>
+                <span className="flex mb-4 text-sm">Tâches</span>
+                <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+                    {statuses.map((s) => (
+                        <div key={s.key} className="bg-foreground/5 rounded-[2rem] p-6 relative">
+                            {/* <span className="w-2.5 h-16 rounded-full absolute right-1 top-1/2 -translate-y-1/2 opacity-65" style={{ backgroundColor: COLORS[s.key] }} /> */}
+                            <p className="text-muted-foreground flex items-center gap-2 text-sm">
+                                {s.label}
+                            </p>
+                            <p className="mt-2 text-3xl font-semibold">{s.count}</p>
+                        </div>
+                    ))}
+                    <div className="bg-foreground/5 rounded-[2rem] p-6">
+                        <p className="text-muted-foreground text-sm">En retard</p>
+                        <p className={cn('mt-2 text-3xl font-semibold', overdue_count > 0 && 'text-destructive')}>{overdue_count}</p>
                     </div>
-                ))}
-                <div className="bg-foreground/5 rounded-[2rem] p-6">
-                    <p className="text-muted-foreground text-sm">En retard</p>
-                    <p className={cn('mt-2 text-3xl font-semibold', overdue_count > 0 && 'text-destructive')}>{overdue_count}</p>
+                </div>
+            </div>
+
+            {/* Members overview */}
+            <div>
+                <span className="mb-4 flex text-sm">Équipe</span>
+                <div className="flex flex-wrap items-center gap-4">
+                    <AvatarGroup>
+                        {shown.map((m) => (
+                            <Avatar key={m.id} title={m.name}>
+                                <AvatarFallback>{getInitials(m.name)}</AvatarFallback>
+                            </Avatar>
+                        ))}
+                        {extra > 0 && <AvatarGroupCount>+{extra}</AvatarGroupCount>}
+                    </AvatarGroup>
+
+                    <Button asChild variant="ghost" size="sm">
+                        <Link href={route('teams.members.index', team.id)}>Voir les membres</Link>
+                    </Button>
                 </div>
             </div>
 
@@ -151,6 +182,6 @@ export default function TeamOverview({ team, statuses, total, progress, overdue_
                     })}
                 </ul>
             </section>
-        </AppLayout>
+        </AppLayout >
     );
 }

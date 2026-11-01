@@ -17,3 +17,11 @@ export type TeamDetail = {
     tasks_count: number;
     done_tasks_count: number;
 };
+
+export type TeamMember = {
+    id: number;
+    name: string;
+    email: string;
+    role: TeamRole;
+    is_me: boolean;
+};

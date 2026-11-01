@@ -1,25 +1,30 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { CalendarRange, Check, Copy, Gauge, ListChecks, LoaderCircle, LogOut, Trash2, UsersRound } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
-
+import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount } from '@/components/ui/avatar';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/tasq/button';
 import { LabelInput } from '@/components/tasq/label-input';
-import { Modal } from '@/components/tasq/modal';import AppLayout from '@/layouts/app-layout';
+import { Modal } from '@/components/tasq/modal'; import AppLayout from '@/layouts/app-layout';
 import { type TeamDetail, type TeamRole } from '@/types/team';
+import { useInitials } from '@/hooks/use-initials';
 
 type Props = {
     team: TeamDetail;
     my_role: TeamRole;
     can: { update: boolean; delete: boolean };
+    members_preview: { id: number; name: string }[];
 };
 
-export default function TeamShow({ team, my_role, can }: Props) {
+export default function TeamShow({ team, my_role, can, members_preview }: Props) {
     const { errors } = usePage().props;
     const [leaveOpen, setLeaveOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [busy, setBusy] = useState(false);
     const [copied, setCopied] = useState(false);
+
+    const getInitials = useInitials();
+    const extra = team.members_count - members_preview.length;
 
     const rename = useForm({ name: team.name });
 
@@ -80,6 +85,25 @@ export default function TeamShow({ team, my_role, can }: Props) {
                         <span>{l.label}</span>
                     </Link>
                 ))}
+            </div>
+
+            {/* Members overview */}
+            <div>
+                <span className="mb-4 flex text-sm">Équipe</span>
+                <div className="flex flex-wrap items-center gap-4">
+                    <AvatarGroup>
+                        {members_preview.map((m) => (
+                            <Avatar key={m.id} title={m.name}>
+                                <AvatarFallback>{getInitials(m.name)}</AvatarFallback>
+                            </Avatar>
+                        ))}
+                        {extra > 0 && <AvatarGroupCount>+{extra}</AvatarGroupCount>}
+                    </AvatarGroup>
+
+                    <Button asChild variant="ghost" size="sm">
+                        <Link href={route('teams.members.index', team.id)}>Voir les membres</Link>
+                    </Button>
+                </div>
             </div>
 
             {can.update && (

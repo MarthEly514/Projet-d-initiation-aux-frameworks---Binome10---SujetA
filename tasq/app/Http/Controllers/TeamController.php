@@ -106,6 +106,11 @@ class TeamController extends Controller
                 'update' => $isResponsable,
                 'delete' => $isResponsable,
             ],
+            'members_preview' => $team->members()
+                ->orderBy('users.name')
+                ->limit(5)
+                ->get()
+                ->map(fn ($m) => ['id' => $m->id, 'name' => $m->name]),
         ]);
     }
 
