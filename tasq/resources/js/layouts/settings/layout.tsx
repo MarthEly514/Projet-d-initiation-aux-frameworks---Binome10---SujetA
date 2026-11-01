@@ -1,61 +1,51 @@
-import Heading from '@/components/heading';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/tasq/button';
 import { cn } from '@/lib/utils';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { KeyRound, Palette, User } from 'lucide-react';
 
 const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        url: '/settings/profile',
-        icon: null,
-    },
-    {
-        title: 'Password',
-        url: '/settings/password',
-        icon: null,
-    },
-    {
-        title: 'Appearance',
-        url: '/settings/appearance',
-        icon: null,
-    },
+    { title: 'Profil', url: '/settings/profile', icon: User },
+    { title: 'Mot de passe', url: '/settings/password', icon: KeyRound },
+    { title: 'Apparence', url: '/settings/appearance', icon: Palette },
 ];
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
-    const currentPath = window.location.pathname;
+    // usePage().url is reactive and SSR-safe, unlike window.location
+    const path = usePage().url.split('?')[0];
 
     return (
-        <div className="px-4 py-6">
-            <Heading title="Settings" description="Manage your profile and account settings" />
+        <div className="flex flex-col gap-8 lg:flex-row lg:gap-12">
+            <aside className="lg:w-56 lg:shrink-0">
+                <p className="text-muted-foreground mb-4 hidden text-sm lg:block">Gérez votre profil et les paramètres de votre compte.</p>
 
-            <div className="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
-                <aside className="w-full max-w-xl lg:w-48">
-                    <nav className="flex flex-col space-y-1 space-x-0">
-                        {sidebarNavItems.map((item) => (
+                {/* Horizontal row on mobile, vertical list on desktop */}
+                <nav className="flex gap-2 overflow-x-auto lg:flex-col" aria-label="Paramètres">
+                    {sidebarNavItems.map((item) => {
+                        const active = path === item.url;
+                        return (
                             <Button
                                 key={item.url}
-                                size="sm"
-                                variant="ghost"
                                 asChild
-                                className={cn('w-full justify-start', {
-                                    'bg-muted': currentPath === item.url,
-                                })}
+                                variant="ghost"
+                                size="sm"
+                                className={cn(
+                                    'shrink-0 justify-start rounded-full px-4',
+                                    active ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground',
+                                )}
                             >
                                 <Link href={item.url} prefetch>
+                                    {item.icon && <item.icon />}
                                     {item.title}
                                 </Link>
                             </Button>
-                        ))}
-                    </nav>
-                </aside>
+                        );
+                    })}
+                </nav>
+            </aside>
 
-                <Separator className="my-6 md:hidden" />
-
-                <div className="flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">{children}</section>
-                </div>
+            <div className="min-w-0 flex-1 lg:max-w-2xl">
+                <section className="space-y-12 rounded-[2rem] p-6 sm:p-8">{children}</section>
             </div>
         </div>
     );
