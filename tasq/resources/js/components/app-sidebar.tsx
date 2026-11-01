@@ -5,7 +5,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { CalendarRange, ClipboardList, Gauge, LayoutGrid, ListChecks, LogOut, Settings, Users, UsersRound } from 'lucide-react';
 
 const generalNav: SidebarNavItem[] = [
-    { title: 'Accueil', url: '/dashboard', icon: LayoutGrid },
+    { title: 'Overview', url: '/dashboard', icon: LayoutGrid },
     { title: 'Mes tâches', url: '/my-tasks', icon: ClipboardList },
     { title: 'Teams', url: '/teams', icon: Users, exact: true },
 ];
