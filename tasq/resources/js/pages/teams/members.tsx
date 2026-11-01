@@ -9,6 +9,7 @@ import { Modal } from '@/components/tasq/modal';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type TeamMember } from '@/types/team';
+import { AddMemberModal } from '@/components/teams/add-member-modal';
 
 type Props = {
     team: { id: number; name: string };
@@ -21,15 +22,7 @@ export default function TeamMembers({ team, members, can_manage }: Props) {
     const [toRemove, setToRemove] = useState<TeamMember | null>(null);
     const [busy, setBusy] = useState(false);
 
-    const invite = useForm({ email: '' });
-
-    const submitInvite: FormEventHandler = (e) => {
-        e.preventDefault();
-        invite.post(route('teams.members.store', team.id), {
-            preserveScroll: true,
-            onSuccess: () => invite.reset(),
-        });
-    };
+    const [addOpen, setAddOpen] = useState(false);
 
     const changeRole = (member: TeamMember, role: 'responsable' | 'collaborateur') =>
         router.put(route('teams.members.role', [team.id, member.id]), { role }, { preserveScroll: true });
@@ -49,29 +42,13 @@ export default function TeamMembers({ team, members, can_manage }: Props) {
     return (
         <AppLayout title="Collaborateurs">
             <Head title={`Collaborateurs · ${team.name}`} />
-
             {can_manage && (
-                <form onSubmit={submitInvite} className="bg-foreground/5 flex flex-col gap-4 rounded-[2rem] p-6">
-                    <h2 className="font-medium">Ajouter un membre</h2>
-                    <p className="text-muted-foreground text-sm">
-                        Saisissez l'e-mail d'une personne déjà inscrite sur Tasq. Elle rejoindra la team comme collaborateur.
-                    </p>
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                        <LabelInput
-                            label="E-mail"
-                            type="email"
-                            required
-                            containerClassName="flex-1"
-                            value={invite.data.email}
-                            onChange={(e) => invite.setData('email', e.target.value)}
-                            error={invite.errors.email}
-                        />
-                        <Button type="submit" disabled={invite.processing}>
-                            {invite.processing ? <LoaderCircle className="animate-spin" /> : <UserPlus />}
-                            Ajouter
-                        </Button>
-                    </div>
-                </form>
+                <div className="flex justify-end">
+                    <Button onClick={() => setAddOpen(true)}>
+                        <UserPlus />
+                        Ajouter un collaborateur
+                    </Button>
+                </div>
             )}
 
             <section className="bg-foreground/5 flex flex-col gap-2 rounded-[2rem] p-6">
@@ -149,6 +126,8 @@ export default function TeamMembers({ team, members, can_manage }: Props) {
                     </Button>
                 </div>
             </Modal>
+
+            <AddMemberModal open={addOpen} onClose={() => setAddOpen(false)} teamId={team.id} />
         </AppLayout>
     );
 }

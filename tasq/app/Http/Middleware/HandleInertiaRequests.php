@@ -50,7 +50,11 @@ class HandleInertiaRequests extends Middleware
                 $team = $request->route('team');
 
                 return $team instanceof Team
-                    ? ['id' => $team->id, 'name' => $team->name]
+                    ? [
+                        'id' => $team->id, 
+                        'name' => $team->name,
+                        'is_responsable' => $team->isResponsable($request->user()),
+                        ]
                     : null;
             },
         ]);

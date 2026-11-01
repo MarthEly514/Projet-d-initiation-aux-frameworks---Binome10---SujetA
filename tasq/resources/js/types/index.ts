@@ -26,7 +26,7 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     [key: string]: unknown;
-    currentTeam: { id: number; name: string } | null;
+    currentTeam: { id: number; name: string, is_responsable: boolean; } | null;
 }
 
 export interface User {

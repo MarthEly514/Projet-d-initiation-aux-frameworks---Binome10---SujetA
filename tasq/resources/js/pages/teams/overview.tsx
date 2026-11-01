@@ -21,10 +21,10 @@ type Props = {
 };
 
 const COLORS: Record<StatusCount['key'], string> = {
-    a_faire: '#64748b',
+    a_faire: '#9f5bfe',
     en_cours: '#1a8fe8',
-    review: '#f59e0b',
-    faite: '#22c55e',
+    review: '#f14f1e',
+    faite: '#0ace82',
 };
 
 const formatDate = (d: string | null) => (d ? new Date(d).toLocaleDateString('fr-FR') : 'Sans échéance');
