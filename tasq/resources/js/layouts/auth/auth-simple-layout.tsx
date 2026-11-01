@@ -10,7 +10,7 @@ interface AuthLayoutProps {
 export default function AuthSimpleLayout({ children, name = 'Tasq', title, description }: AuthLayoutProps) {
     return (
         <div className="bg-background flex min-h-svh w-full">
-            <aside className="bg-[#171717] relative hidden w-[45%] max-w-[600px] flex-col p-15 lg:flex">
+            <aside className="bg-auth-panel relative hidden w-[45%] max-w-[600px] flex-col p-15 lg:flex">
                 <Link href={route('home')} className="text-4xl font-semibold tracking-tight">
                     {name}
                 </Link>
