@@ -607,9 +607,52 @@ Pour le favicon, le même dessin est dans `public/favicon.svg`.
  
 - [ ] Prop `alwaysFloat` sur `LabelInput` (champs de date).
 - [ ] `LabelTextarea` pour les descriptions de tâche.
-- [ ] Composants de base communs aux features : `StatusBadge`, `Modal`, `ConfirmDialog` (à créer dans ce dossier par le premier qui en a besoin, en prévenant l'autre dev).
-- [ ] Rendre `FormCard` cohérent avec les autres (export nommé), si l'équipe préfère une seule convention.
+- [x] Composants de base communs aux features : `StatusBadge`, `Modal`, `ConfirmDialog` (à créer dans ce dossier par le premier qui en a besoin, en prévenant l'autre dev).
+- [x] Rendre `FormCard` cohérent avec les autres (export nommé), si l'équipe préfère une seule convention.
 
-    
 
+
+## 2026-11-01  
+- Creation de l'element `Timeline`, la page des collaborateurs ainsi que celle des teams.
+
+- Modifications dans :
+    * index.ts: `currentTeam: { id: number; name: string } | null;`
+    * team.ts: ajout de 
+    ```ts
+    export type TeamMember = {
+        id: number;
+        name: string;
+        email: string;
+        role: TeamRole;
+        is_me: boolean;
+    };
+    ```
+    * Task.php: Ajout d'un observer 
+    ```php
+    use App\Observers\TaskObserver;
+    use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+
+    #[ObservedBy([TaskObserver::class])]
+    ```
+    * HandleInertiaRequests.php: ajout de is_responsable pour track le role au changement de team dans la top bar
+    ```php
+     'currentTeam' => function () use ($request) {
+                $team = $request->route('team');
+
+                return $team instanceof Team
+                    ? [
+                        'id' => $team->id, 
+                        'name' => $team->name,
+                        'is_responsable' => $team->isResponsable($request->user()),
+                        ]
+                    : null;
+            },
+    ```
+    * index.ts: same ajout de is_responsable
+    ```ts
+    currentTeam: { id: number; name: string, is_responsable: boolean; } | null;
+    ```
+
+
+- Creation d'une nouvelle carte de taches pour les vues globales des taches, 
     

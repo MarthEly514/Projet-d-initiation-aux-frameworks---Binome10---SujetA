@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
+use App\Enums\TaskStatus;
 
 class Team extends Model
 {
@@ -76,6 +77,15 @@ class Team extends Model
     public function hasMember(User $user): bool
     {
         return $this->members()->whereKey($user->id)->exists();
+    }
+
+    public function scopeWithSummary($query)
+    {
+        return $query->withCount([
+            'members',
+            'tasks',
+            'tasks as done_tasks_count' => fn ($q) => $q->where('status', TaskStatus::Faite->value),
+        ]);
     }
 
     public function isResponsable(User $user): bool

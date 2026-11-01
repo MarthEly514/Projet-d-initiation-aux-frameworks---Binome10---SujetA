@@ -31,6 +31,10 @@ class TaskController extends Controller
 
         $tasks = $team->tasks()
             ->with('assignees')
+            ->withCount([
+                'steps',
+                'steps as done_steps_count' => fn ($q) => $q->where('is_done', true),
+            ])
             ->when($status, fn ($query) => $query->where('status', $status))
             ->when($responsibleId, fn ($query) => $query->whereHas('leads', fn ($leads) => $leads->whereKey($responsibleId)))
             ->latest('id')

@@ -28,6 +28,7 @@ export interface SharedData {
     auth: Auth;
     notifications: NotificationSummary | null;
     [key: string]: unknown;
+    currentTeam: { id: number; name: string, is_responsable: boolean; } | null;
 }
 
 export interface User {
@@ -38,5 +39,5 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
+    [key: string]: unknown;
 }

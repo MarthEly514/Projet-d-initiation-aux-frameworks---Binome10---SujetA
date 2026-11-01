@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Team;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
@@ -48,6 +49,17 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'notifications' => fn () => $this->notifications($request),
+            'currentTeam' => function () use ($request) {
+                $team = $request->route('team');
+
+                return $team instanceof Team
+                    ? [
+                        'id' => $team->id,
+                        'name' => $team->name,
+                        'is_responsable' => $team->isResponsable($request->user()),
+                    ]
+                    : null;
+            },
         ]);
     }
 

@@ -17,9 +17,9 @@ export default function AppSidebarLayout({ children, breadcrumbs = [], title, on
     return (
         <AppShell variant="sidebar">
             <AppSidebar />
-            <AppContent variant="sidebar" className="overflow-x-hidden lg:p-10">
+            <AppContent variant="sidebar" className="overflow-x-hidden max-h-screen lg:p-10 lg:pb-0">
                 <AppTopbar title={heading} onCreateTask={onCreateTask} />
-                <div className="flex flex-1 flex-col gap-6 px-6 pb-8 md:px-8">{children}</div>
+                <div className="flex flex-1 flex-col gap-6 lg:gap-15 px-6 pb-8 pt-8 md:px-8 overflow-scroll">{children}</div>
             </AppContent>
         </AppShell>
     );

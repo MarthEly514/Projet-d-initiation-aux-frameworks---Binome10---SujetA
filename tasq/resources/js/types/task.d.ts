@@ -29,6 +29,8 @@ export interface Task {
     collaborators: TaskMember[];
     team?: { id: number; name: string };
     steps?: TaskStep[];
+    steps_count?: number | null;
+    done_steps_count?: number | null;
 }
 
 export interface TaskFilters {
