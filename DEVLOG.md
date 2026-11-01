@@ -656,3 +656,10 @@ Pour le favicon, le même dessin est dans `public/favicon.svg`.
 
 - Creation d'une nouvelle carte de taches pour les vues globales des taches, 
     
+
+
+- ## Cephas:
+**B5 : Tests**
+
+- `LeaveTeamTest`, `TaskPolicyTest` et `TaskStatusTest` ajoutés (25 tests).
+- `TeamController::leave` utilisait `TeamMembershipService`, une classe absente du dépôt : quitter une team plantait. Le service est créé avec les règles déjà notées ici : refus si on est le dernier membre ou le dernier responsable. Le membre qui part est aussi retiré des tâches de cette team, comme dans `TeamMemberController::destroy`.
