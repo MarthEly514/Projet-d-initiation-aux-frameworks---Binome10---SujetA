@@ -44,7 +44,7 @@ export default function Dashboard({ teams, counts, overdue, upcoming }: Props) {
 
             <section className="flex flex-col gap-4">
                 <h2 className="text-lg font-medium">Mes tâches</h2>
-                <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+                <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-5">
                     {tiles.map((t) => (
                         <div key={t.label} className="bg-foreground/5 rounded-[2rem] p-6">
                             <p className="text-muted-foreground text-sm">{t.label}</p>
@@ -80,9 +80,9 @@ export default function Dashboard({ teams, counts, overdue, upcoming }: Props) {
             </section>
 
             <section className="flex flex-col gap-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-col lg:flex-row lg:flex-wrap lg:items-center lg:justify-between gap-3">
                     <h2 className="text-lg font-medium">Mes teams</h2>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col lg:flex-row gap-3">
                         <Button onClick={() => setCreateOpen(true)}>
                             <Plus />
                             Créer une team
