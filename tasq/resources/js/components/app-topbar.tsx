@@ -13,6 +13,7 @@ import { ChevronDown, ListPlus, LogIn, Plus, Search, UserPlus, UsersRound } from
 import { useState } from 'react';
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from './tasq/dropdown-menu';
 import { UserMenuContent } from './tasq/user-menu-content';
+import { SearchBar } from './searchbar';
 
 export function AppTopbar({ title, onCreateTask }: { title: string; onCreateTask?: () => void }) {
     const { auth, currentTeam } = usePage<SharedData>().props;
@@ -38,15 +39,8 @@ export function AppTopbar({ title, onCreateTask }: { title: string; onCreateTask
 
             <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">{title}</h1>
 
-            {/* Search: not wired yet */}
-            <div className="relative ml-6 hidden max-w-sm flex-1 lg:block xl:ml-20">
-                <Search className="text-muted-foreground absolute top-1/2 left-0 size-6 -translate-y-1/2" />
-                <input
-                    type="search"
-                    placeholder="Rechercher..."
-                    className="placeholder:text-muted-foreground border-foreground/20 focus:border-brand h-10 w-full border-0 border-b bg-transparent pl-10 text-sm transition-colors focus:outline-hidden"
-                />
-            </div>
+            {/* Search */}
+            <SearchBar className="ml-6 hidden max-w-sm flex-1 lg:block xl:ml-20" />
 
             <div className="ml-auto flex items-center gap-3">
                 {showQuickCreate && (
