@@ -27,7 +27,7 @@ beforeEach(function () {
 });
 
 test('guests are redirected to the login page', function () {
-    $this->get(route('tasks.index', $this->team))->assertRedirect(route('login'));
+    $this->get(route('teams.tasks.index', $this->team))->assertRedirect(route('login'));
 });
 
 test('a member sees the tasks of the team without managing them', function () {
@@ -36,7 +36,7 @@ test('a member sees the tasks of the team without managing them', function () {
     Task::factory()->create();
 
     $this->actingAs($this->collaborateur)
-        ->get(route('tasks.index', $this->team))
+        ->get(route('teams.tasks.index', $this->team))
         ->assertInertia(fn (Assert $page) => $page
             ->component('tasks/index')
             ->has('tasks', 1)
@@ -48,7 +48,7 @@ test('a member sees the tasks of the team without managing them', function () {
 
 test('a responsable can manage the tasks of the team', function () {
     $this->actingAs($this->responsable)
-        ->get(route('tasks.index', $this->team))
+        ->get(route('teams.tasks.index', $this->team))
         ->assertInertia(fn (Assert $page) => $page->where('canManage', true));
 });
 
@@ -57,7 +57,7 @@ test('tasks can be filtered by status', function () {
     Task::factory()->for($this->team)->status(TaskStatus::EnCours)->create();
 
     $this->actingAs($this->collaborateur)
-        ->get(route('tasks.index', [$this->team, 'status' => 'faite']))
+        ->get(route('teams.tasks.index', [$this->team, 'status' => 'faite']))
         ->assertInertia(fn (Assert $page) => $page
             ->has('tasks', 1)
             ->where('tasks.0.id', $done->id)
@@ -71,7 +71,7 @@ test('tasks can be filtered by responsible', function () {
     $other->syncAssignees($this->responsable->id, [$this->collaborateur->id]);
 
     $this->actingAs($this->collaborateur)
-        ->get(route('tasks.index', [$this->team, 'responsible' => $this->collaborateur->id]))
+        ->get(route('teams.tasks.index', [$this->team, 'responsible' => $this->collaborateur->id]))
         ->assertInertia(fn (Assert $page) => $page
             ->has('tasks', 1)
             ->where('tasks.0.id', $mine->id));
@@ -81,7 +81,7 @@ test('an unknown status filter shows all the tasks', function () {
     Task::factory()->for($this->team)->count(2)->create();
 
     $this->actingAs($this->collaborateur)
-        ->get(route('tasks.index', [$this->team, 'status' => 'inconnu']))
+        ->get(route('teams.tasks.index', [$this->team, 'status' => 'inconnu']))
         ->assertInertia(fn (Assert $page) => $page
             ->has('tasks', 2)
             ->where('filters.status', null));
@@ -194,7 +194,7 @@ test('a responsable deletes a task', function () {
 
 test('someone outside the team cannot see its tasks', function () {
     $this->actingAs($this->outsider)
-        ->get(route('tasks.index', $this->team))
+        ->get(route('teams.tasks.index', $this->team))
         ->assertForbidden();
 });
 
@@ -218,7 +218,7 @@ test('the responsable of another team cannot touch these tasks', function () {
 
     $this->actingAs($rival);
 
-    $this->get(route('tasks.index', $this->team))->assertForbidden();
+    $this->get(route('teams.tasks.index', $this->team))->assertForbidden();
     $this->post(route('tasks.store', $this->team), ($this->payload)())->assertForbidden();
     $this->put(route('tasks.update', $task), ($this->payload)())->assertForbidden();
     $this->delete(route('tasks.destroy', $task))->assertForbidden();

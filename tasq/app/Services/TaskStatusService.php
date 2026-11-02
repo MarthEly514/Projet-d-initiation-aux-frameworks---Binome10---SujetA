@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Enums\TaskStatus;
 use App\Models\Task;
+use App\Notifications\TaskReadyForReview;
+use Illuminate\Support\Facades\Notification;
 
 class TaskStatusService
 {
@@ -21,8 +23,13 @@ class TaskStatusService
         }
 
         $done = $task->steps()->where('is_done', true)->count();
+        $wasInReview = $task->status === TaskStatus::Review;
 
         $task->update(['status' => $this->statusFromSteps($task, $done, $total)]);
+
+        if ($task->status === TaskStatus::Review && ! $wasInReview) {
+            $this->notifyResponsables($task);
+        }
     }
 
     /**
@@ -33,6 +40,8 @@ class TaskStatusService
         $task->status = TaskStatus::Review;
         $task->rejection_comment = null;
         $task->save();
+
+        $this->notifyResponsables($task);
     }
 
     public function approve(Task $task): void
@@ -49,6 +58,11 @@ class TaskStatusService
         $task->status = TaskStatus::EnCours;
         $task->rejection_comment = $comment;
         $task->save();
+    }
+
+    private function notifyResponsables(Task $task): void
+    {
+        Notification::send($task->team->responsables, new TaskReadyForReview($task));
     }
 
     /**
