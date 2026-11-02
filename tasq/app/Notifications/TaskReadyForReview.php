@@ -2,9 +2,8 @@
 
 namespace App\Notifications;
 
+use App\Models\Task;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class TaskReadyForReview extends Notification
@@ -14,10 +13,7 @@ class TaskReadyForReview extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(public Task $task) {}
 
     /**
      * Get the notification's delivery channels.
@@ -26,18 +22,7 @@ class TaskReadyForReview extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     */
-    public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+        return ['database'];
     }
 
     /**
@@ -48,7 +33,9 @@ class TaskReadyForReview extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'task_id' => $this->task->id,
+            'task_name' => $this->task->name,
+            'team_name' => $this->task->team->name,
         ];
     }
 }

@@ -1,3 +1,4 @@
+import { type NotificationSummary } from '@/types/notification';
 import { LucideIcon } from 'lucide-react';
 
 export interface Auth {
@@ -25,6 +26,7 @@ export interface SharedData {
     name: string;
     quote: { message: string; author: string };
     auth: Auth;
+    notifications: NotificationSummary | null;
     [key: string]: unknown;
     currentTeam: { id: number; name: string, is_responsable: boolean; } | null;
 }

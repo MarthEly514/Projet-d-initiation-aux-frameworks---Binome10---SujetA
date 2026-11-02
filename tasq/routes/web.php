@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SearchController;
 
 Route::get('/', function () {
@@ -18,4 +18,5 @@ Route::middleware(['auth'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 require __DIR__.'/tasks.php';
+require __DIR__.'/notifications.php';
 require __DIR__.'/teams.php';
