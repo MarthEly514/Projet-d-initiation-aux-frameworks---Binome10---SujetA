@@ -34,50 +34,89 @@ Le but de ce projet est de pouvoir créer avec Laravel une application pour orga
     - XAMPP (MySQL/MariaDB + phpMyAdmin)
     - Git
 
-- **Mise en place du projet Laravel avec**
-    - React
-    - Authentication Laravel
-
-    ```bash
-    composer global require laravel/installer
-    laravel new taskflow
-    ```
-    *Attendre la fin de l'installation*
-
-    ```bash
-    cd tasq
-    php artisan serve # ou composer run dev puis aller a http://localhost:8000
-    ```
-
-
-- **Creation de la DB:** 
+- ### 1. Récupérer le projet
+ 
 ```bash
-# ouverture de XAMPP (les commandes peuvent varier en fonction du systeme d'exploitation)
+git clone https://github.com/MarthEly514/Projet-d-initiation-aux-frameworks---Binome10---SujetA.git tasq
+cd tasq
+```
+ 
+- ### 2. Installer les dépendances
+ 
+```bash
+composer install
+npm install
+```
+  
+- ### 3. Créer le fichier d'environnement
+ 
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+ 
+- ### 4. Créer la base de données
+ 
+Démarrer XAMPP (les commandes varient selon le système) :
+
+### Linux
+```bash
+# Linux
 sudo /opt/lampp/lampp start
 ```
-Aller à `http://localhost/phpmyadmin` puis creez une nouvelle base de donnees nommee **tasq** et la laisser vide
 
-- **Update du .env**
+### Windows & macOS
+Sous Windows ou macOS, lancer MySQL depuis le panneau de contrôle XAMPP.
 
+- Ouvrir le panneau. Cherchez « XAMPP Control Panel » dans le menu puis lancer.
+- Démarrer MySQL. Cliquez sur Start sur la ligne MySQL. Le nom du module passe en vert avec un numéro de port, en général 3306.
+- Démarrer Apache. Cliquez sur Start sur la ligne Apache, car phpMyAdmin en a besoin. Il passe en vert avec les ports 80, 443.
+ 
+ 
+Aller sur `http://localhost/phpmyadmin`, puis créer une base de données nommée **tasq** (interclassement `utf8mb4_unicode_ci`) et la laisser vide.
+ 
+- ### 5. Configurer le `.env`
+ 
+Modifier ces lignes dans le fichier `.env` :
+ 
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=taskflow
+DB_DATABASE=tasq
 DB_USERNAME=root
 DB_PASSWORD=
 MAIL_MAILER=log
 ```
-
-- **Migration de la base**
+ 
+`MAIL_MAILER=log` écrit les e-mails dans `storage/logs/laravel.log` au lieu de les envoyer.
+ 
+- ### 6. Créer les tables et les données de démonstration
+ 
 ```bash
-php artisan migrate
+php artisan migrate --seed
+```
+ 
+Le seeder crée des utilisateurs, deux équipes, des tâches à tous les statuts et leurs étapes. Compte de démonstration :
+ 
+- E-mail : `demo@tasq.test`
+- Mot de passe : `password`
+Ce compte est responsable de la première équipe et simple collaborateur de la seconde, ce qui permet de tester les deux rôles. Pour repartir de zéro à tout moment : `php artisan migrate:fresh --seed`.
+ 
+Pour une base vide, sans données de démonstration, lancer seulement `php artisan migrate`.
+ 
+- ### 7. Lancer l'application
+ 
+```bash
 composer run dev
 ```
-
-- **Installation de packages additionnels**
+ 
+Cette commande démarre le serveur Laravel, Vite, la file d'attente et les logs. Ouvrir ensuite **http://localhost:8000**.
+ 
+Alternative:
+ 
 ```bash
-npm install recharts
-
-
+php artisan serve
+npm run dev
+```
 
