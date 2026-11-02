@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SearchController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -10,6 +11,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+    Route::get('search', SearchController::class)->name('search');
 
 });
 
